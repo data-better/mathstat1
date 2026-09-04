@@ -2,7 +2,7 @@
 
 ### 2026 수리통계학 출석수업 슬라이드
 
-- 웹 : data-better.github.io/mathstat1
+- 웹 : [data-better.github.io/mathstat1](data-better.github.io/mathstat1) 
 - pdf : 수리통계학 출석수업_1page.pdf
 
 ### 유의사항
