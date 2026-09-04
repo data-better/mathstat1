@@ -1,0 +1,2678 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>수리통계학 출석수업</title>
+  <style>
+    :root {
+      --primary: #1e3a8a;
+      --primary-light: #eff6ff;
+      --accent: #2563eb;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --card-bg: #f8fafc;
+      --card-border: #e2e8f0;
+      --badge-bg: #e0e7ff;
+      --badge-text: #3730a3;
+    }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Pretendard", "Apple SD Gothic Neo", "Malgun Gothic", "Noto Sans KR", sans-serif;
+      background-color: #0f172a;
+      color: var(--text-main);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+    #presentation-wrapper {
+      position: relative;
+      width: 1040px;
+      height: 670px;
+      background: #ffffff;
+      border-radius: 16px;
+      box-shadow: 0 20px 45px rgba(0, 0, 0, 0.35);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .slide-area {
+      flex: 1;
+      position: relative;
+      background: #ffffff;
+      overflow-y: auto;
+    }
+    .slide {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      padding: 40px 56px;
+      display: none;
+      flex-direction: column;
+      justify-content: flex-start;
+      align-items: flex-start;
+      text-align: left;
+      background: #ffffff;
+      box-sizing: border-box;
+    }
+    .slide.active {
+      display: flex;
+    }
+    .slide-header {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      border-bottom: 2px solid #edf2f7;
+      padding-bottom: 12px;
+      margin-bottom: 20px;
+    }
+    .header-left {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+    .slide-category {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .slide-title {
+      font-size: 26px;
+      font-weight: 800;
+      color: var(--primary);
+      line-height: 1.25;
+    }
+    .slide-tag {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--badge-text);
+      background: var(--badge-bg);
+      padding: 5px 12px;
+      border-radius: 9999px;
+      white-space: nowrap;
+    }
+    .slide-body {
+      width: 100%;
+      flex: 1;
+      font-size: 19px;
+      line-height: 1.7;
+      color: #334155;
+    }
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 22px 26px;
+      margin-bottom: 16px;
+      width: 100%;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+    }
+    .card-title {
+      font-size: 21px;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .card-title::before {
+      content: "";
+      display: inline-block;
+      width: 4px;
+      height: 20px;
+      background: var(--accent);
+      border-radius: 2px;
+    }
+    ul.stylish-list {
+      list-style: none;
+      padding-left: 0;
+    }
+    ul.stylish-list li {
+      position: relative;
+      padding-left: 22px;
+      margin-bottom: 10px;
+      line-height: 1.65;
+    }
+    ul.stylish-list li::before {
+      content: "•";
+      position: absolute;
+      left: 4px;
+      top: -1px;
+      color: var(--accent);
+      font-size: 22px;
+      line-height: 1;
+    }
+    ul.stylish-list li ul {
+      list-style: none;
+      padding-left: 15px;
+      margin-top: 8px;
+    }
+    ul.stylish-list li ul li::before {
+      content: "–";
+      color: var(--text-muted);
+      font-size: 16px;
+      left: 0;
+    }
+    .quote-card {
+      background: linear-gradient(135deg, #eff6ff 0%, #f8fafc 100%);
+      border-left: 5px solid var(--accent);
+      border-radius: 0 12px 12px 0;
+      padding: 30px 36px;
+      margin-top: 20px;
+      font-size: 22px;
+      line-height: 1.7;
+      color: #1e293b;
+      font-style: italic;
+    }
+    .quote-author {
+      margin-top: 16px;
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--primary);
+      font-style: normal;
+      text-align: right;
+    }
+    .math-card {
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      border-radius: 10px;
+      padding: 16px 20px;
+      margin: 14px 0;
+      text-align: center;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+    }
+    math {
+      font-size: 23px;
+      color: #0f172a;
+    }
+    .title-slide-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      width: 100%;
+    }
+    .title-slide-content .main-badge {
+      background: var(--badge-bg);
+      color: var(--badge-text);
+      font-size: 16px;
+      font-weight: 700;
+      padding: 6px 18px;
+      border-radius: 9999px;
+      margin-bottom: 24px;
+    }
+    .title-slide-content h1 {
+      font-size: 48px;
+      font-weight: 900;
+      color: var(--primary);
+      letter-spacing: -0.5px;
+      margin-bottom: 14px;
+    }
+    .title-slide-content .author-box {
+      border-top: 1px solid #e2e8f0;
+      padding-top: 24px;
+      font-size: 20px;
+      font-weight: 700;
+      color: #1e293b;
+    }
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      width: 100%;
+    }
+
+    /* 하단 내비게이션 바 */
+    .footer-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 28px;
+      background: #ffffff;
+      border-top: 1px solid #e2e8f0;
+      user-select: none;
+    }
+    .nav-btn {
+      background: #ffffff;
+      color: #334155;
+      border: 1px solid #cbd5e1;
+      padding: 8px 18px;
+      font-size: 14px;
+      font-weight: 600;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .nav-btn:hover:not(:disabled) {
+      background: var(--primary-light);
+      color: var(--primary);
+      border-color: var(--accent);
+    }
+    .nav-btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+    .nav-btn.primary {
+      background: var(--primary);
+      color: #ffffff;
+      border-color: var(--primary);
+    }
+    .nav-btn.primary:hover:not(:disabled) {
+      background: #1d4ed8;
+    }
+    .pdf-btn {
+      background: #dc2626;
+      color: #ffffff;
+      border: none;
+      padding: 8px 14px;
+      font-size: 13px;
+      font-weight: 600;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.15s ease;
+    }
+    .pdf-btn:hover {
+      background: #b91c1c;
+    }
+
+    .jump-controller {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: #f1f5f9;
+      padding: 4px 12px;
+      border-radius: 10px;
+      border: 1px solid #e2e8f0;
+    }
+    .jump-controller span {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+    .jump-input {
+      width: 52px;
+      height: 32px;
+      text-align: center;
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--primary);
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      outline: none;
+      padding: 2px 4px;
+      transition: border-color 0.15s ease;
+    }
+    .jump-input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
+    }
+    .jump-btn {
+      background: var(--accent);
+      color: white;
+      border: none;
+      padding: 6px 12px;
+      font-size: 13px;
+      font-weight: 600;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.15s ease;
+    }
+    .jump-btn:hover {
+      background: #1d4ed8;
+    }
+    .slide-select {
+      height: 32px;
+      font-size: 13px;
+      color: #334155;
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      padding: 0 8px;
+      outline: none;
+      cursor: pointer;
+      max-width: 210px;
+    }
+    .slide-select:focus {
+      border-color: var(--accent);
+    }
+
+    /* ---------------------------------------------------- */
+    /* PDF 출력 / 인쇄 전용 미디어 쿼리 (가로 방향 및 페이지 분할) */
+    /* ---------------------------------------------------- */
+    @media print {
+      @page {
+        size: A4 landscape;
+        margin: 0;
+      }
+      body {
+        background: #ffffff !important;
+        padding: 0 !important;
+        display: block !important;
+        min-height: auto !important;
+      }
+      #presentation-wrapper {
+        width: 100% !important;
+        height: auto !important;
+        border-radius: 0 !important;
+        box-shadow: none !important;
+        display: block !important;
+      }
+      .footer-bar {
+        display: none !important;
+      }
+      .slide-area {
+        overflow: visible !important;
+        display: block !important;
+      }
+      .slide {
+        display: flex !important;
+        position: relative !important;
+        width: 100vw !important;
+        height: 100vh !important;
+        page-break-after: always;
+        break-after: page;
+        box-sizing: border-box;
+        padding: 40px 56px !important;
+      }
+      .card, .math-card, .quote-card {
+        page-break-inside: avoid;
+        break-inside: avoid;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div id="presentation-wrapper">
+  <div class="slide-area" id="slideArea">
+
+    <!-- 1. 표지 -->
+    <div class="slide active">
+      <div class="title-slide-content">
+        <div class="main-badge">방송통신대학교 출석수업</div>
+        <h1>수리통계학</h1>
+        <div class="author-box">통계·데이터과학과 이긍희 교수</div>
+      </div>
+    </div>
+
+    <!-- 2. 교과목 개요 -->
+    <div class="slide">
+      <div class="slide-header">
+        <div class="header-left">
+          <div class="slide-category">수리통계학 OT</div>
+          <div class="slide-title">교과목의 개요</div>
+        </div>
+        <div class="slide-tag">1 교과목의 개요</div>
+      </div>
+      <div class="slide-body">
+        <div class="card">
+          <div class="card-title">다루는 내용 : 확률이론, 추론 이론</div>
+          <ul class="stylish-list">
+            <li>통계적 추론의 기초 개념 (1강) — 통계학과 확률 (2, 3 강)</li>
+            <li>모집단의 분포 (4, 5 강) — 표본분포 (6, 7 강)</li>
+            <li>점추정 (8 강) — 점추정량의 비교 (9, 10 강)</li>
+            <li>가설검정 (11, 12 강) — 구간추정 (13 강)</li>
+            <li>베이지안 추정과 검정 (14, 15 강)</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. 사전 지식 -->
+    <div class="slide">
+      <div class="slide-header">
+        <div class="header-left">
+          <div class="slide-category">수리통계학 OT</div>
+          <div class="slide-title">사전에 알아야 할 것</div>
+        </div>
+        <div class="slide-tag">2 사전 지식</div>
+      </div>
+      <div class="slide-body">
+        <div class="card">
+          <div class="card-title">선수 과목 및 기초 지식</div>
+          <ul class="stylish-list">
+            <li><strong>통계학개론</strong></li>
+            <li><strong>대학수학 :</strong> 미분, 적분</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4. 학습방법 -->
+    <div class="slide">
+      <div class="slide-header">
+        <div class="header-left">
+          <div class="slide-category">수리통계학 OT</div>
+          <div class="slide-title">통계적 추론을 아는 방법</div>
+        </div>
+        <div class="slide-tag">3 학습방법</div>
+      </div>
+      <div class="slide-body">
+        <div class="card">
+          <div class="card-title">세 가지 핵심 학습 접근법</div>
+          <ul class="stylish-list">
+            <li><strong>수학을 이용한 연역적 방법</strong></li>
+            <li><strong>통계학(과학)의 역사와 철학</strong></li>
+            <li><strong>컴퓨터 시뮬레이션을 이용</strong></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- 5. 1.1 통계적 추론 -->
+    <div class="slide">
+      <div class="slide-header">
+        <div class="header-left">
+          <div class="slide-category">1강 통계적 추론의 기초개념</div>
+          <div class="slide-title">1.1 통계적 추론</div>
+        </div>
+        <div class="slide-tag">1. 통계적 판단</div>
+      </div>
+      <div class="slide-body">
+        <div class="card">
+          <div class="card-title">통계적 판단의 기본 관점</div>
+          <ul class="stylish-list">
+            <li>세상은 불확실하다고 생각하고 세상의 일부를 관측해서 세상을 추론</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- 6. 통계적 추론의 예 -->
+    <div class="slide">
+      <div class="slide-header">
+        <div class="header-left">
+          <div class="slide-category">1강 통계적 추론의 기초개념</div>
+          <div class="slide-title">1.1 통계적 추론의 예</div>
+        </div>
+        <div class="slide-tag">1. 통계적 판단</div>
+      </div>
+      <div class="slide-body">
+        <div class="card">
+          <div class="card-title">꽃씨 비율 추론 문제</div>
+          <ul class="stylish-list">
+            <li>꽃씨가 100만개, 어떤 색 꽃 꽃씨인지 알 수 없다.</li>
+            <li>보라색 꽃 꽃씨 비율은?</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- 7. 1.2 통계적 추론의 가정 -->
+    <div class="slide">
+      <div class="slide-header">
+        <div class="header-left">
+          <div class="slide-category">1강 통계적 추론의 기초개념</div>
+          <div class="slide-title">1.2 통계적 추론의 가정</div>
+        </div>
+        <div class="slide-tag">1. 통계적 판단</div>
+      </div>
+      <div class="slide-body">
+        <div class="card">
+          <div class="card-title">불확실한 세상과 추론</div>
+          <ul class="stylish-list">
+            <li>불확실한 세상 → 확률로 표현</li>
+            <li>세상 일부 측정 → 불확실한 세상 추론</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- 8. 1.4 통계적 추론의 응용 -->
+    <div class="slide">
+      <div class="slide-header">
+        <div class="header-left">
+          <div class="slide-category">1강 통계적 추론의 기초개념</div>
+          <div class="slide-title">1.3 통계적 추론의 응용</div>
+        </div>
+        <div class="slide-tag">1. 통계적 판단</div>
+      </div>
+      <div class="slide-body">
+        <div class="card">
+          <div class="card-title">현실 세계의 데이터 기반 의사결정</div>
+          <ul class="stylish-list">
+            <li>여론조사, 신약개발, 상품추천 등</li>
+            <li>데이터를 기반으로 한 판단은 통계적 추론과 관련</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- 9. 이안 해킹 명언 -->
+    <div class="slide">
+      <div class="slide-header">
+        <div class="header-left">
+          <div class="slide-category">1강 통계적 추론의 기초개념</div>
+          <div class="slide-title">1.4 통계학의 역할</div>
+        </div>
+        <div class="slide-tag">1. 통계적 판단</div>
+      </div>
+      <div class="slide-body">
+        <div class="quote-card">
+          “통계학자는 생각하는 방법, 자기견해를 내세우는 방법을 변화시켜서 세상을 바꾸었다.”
+          <div class="quote-author">— 이안 해킹 (Ian Hacking)</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 10. 2.1 불확실성과 데이터 측면의 정의 -->
+    <div class="slide">
+      <div class="slide-header">
+        <div class="header-left">
+          <div class="slide-category">1강 통계적 추론의 기초개념</div>
+          <div class="slide-title">2.1 불확실성과 데이터 측면의 정의</div>
+        </div>
+        <div class="slide-tag">2. 통계학의 정의</div>
+      </div>
+      <div class="slide-body">
+        <div class="card">
+          <div class="card-title">통계학의 정의</div>
+          <ul class="stylish-list">
+            <li>불확실성, 불완전성, 변동성을 포함한 데이터로부터 지식을 일반화하고 효율적으로 사용할 수 있도록 하는 학문</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- 11. 2.2 통계학 개론에서의 정의 -->
+    <div class="slide">
+      <div class="slide-header">
+        <div class="header-left">
+          <div class="slide-category">2. 통계학의 정의</div>
+          <div class="slide-title">2.2 통계학 개론에서의 정의</div>
+        </div>
+        <div class="slide-tag">2 통계학의 정의</div>
+      </div>
+      <div class="slide-body">
+        <div class="card">
+          <div class="card-title">통계학의 정의</div>
+          <ul class="stylish-list">
+            <li>관심대상에 대하여 관련된 데이터를 수집하고 그 데이터를 요약·정리하여 이로부터 불확실한 사실에 대한 결론이나 일반적인 규칙성을 이끌어내는 이론과 방법</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- 12. 3.1 모집단과 표본 -->
+    <div class="slide">
+      <div class="slide-header">
+        <div class="header-left">
+          <div class="slide-category">1강 통계적 추론의 기초개념</div>
+          <div class="slide-title">3.1 모집단과 표본</div>
+        </div>
+        <div class="slide-tag">3. 용어 정리</div>
+      </div>
+      <div class="slide-body">
+        <div class="card">
+          <div class="card-title">통계학의 출발점</div>
+          <ul class="stylish-list">
+            <li>관심대상 전체를 모두 조사하지 않고 일부만 조사․관측하여 전체를 파악</li>
+            <li><strong>모집단 (population) :</strong> 관심대상 전체</li>
+            <li><strong>표본 (sample) :</strong> 모집단의 일부</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- 13. 3.2 모집단의 불확실성 -->
+    <div class="slide">
+      <div class="slide-header">
+        <div class="header-left">
+          <div class="slide-category">1강 통계적 추론의 기초개념</div>
+          <div class="slide-title">3.2 모집단의 불확실성</div>
+        </div>
+        <div class="slide-tag">3. 용어 정리</div>
+      </div>
+      <div class="slide-body">
+        <div class="card">
+          <div class="card-title">확률과 확률분포 표현</div>
+          <ul class="stylish-list">
+            <li>모집단의 불확실성은 확률과 확률분포로 표현</li>
+            <li><strong>확률 :</strong> 0과 1 사이 값으로 사건 발생 가능성
+              <ul>
+                <li>빈도론적 해석</li>
+                <li>인식론적 확률</li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- 14. 3.3 확률변수 -->
+    <div class="slide">
+      <div class="slide-header">
+        <div class="header-left">
+          <div class="slide-category">1강 통계적 추론의 기초개념</div>
+          <div class="slide-title">3.3 확률변수</div>
+        </div>
+        <div class="slide-tag">3. 용어 정리</div>
+      </div>
+      <div class="slide-body">
+        <div class="card">
+          <div class="card-title">정의</div>
+          <ul class="stylish-list">
+            <li><strong>확률변수 :</strong> 사건을 숫자로 바꿔 주는 함수</li>
+            <li><strong>확률변수와 데이터</strong></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- 15. 3.4 확률분포 -->
+    <div class="slide">
+      <div class="slide-header">
+        <div class="header-left">
+          <div class="slide-category">1강 통계적 추론의 기초개념</div>
+          <div class="slide-title">3.4 확률분포</div>
+        </div>
+        <div class="slide-tag">3. 용어 정리</div>
+      </div>
+      <div class="slide-body">
+        <div class="card">
+          <div class="card-title">불확실성의 함수 표현</div>
+          <ul class="stylish-list">
+            <li>확률변수의 불확실성은 확률분포로 표현</li>
+            <li><strong>확률분포 :</strong> 몇 개의 모수(parameter)가 포함된 수학적 함수로 표현</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- 16. 3.5 통계량과 표본분포 -->
+    <div class="slide">
+      <div class="slide-header">
+        <div class="header-left">
+          <div class="slide-category">1강 통계적 추론의 기초개념</div>
+          <div class="slide-title">3.5 통계량과 표본분포</div>
+        </div>
+        <div class="slide-tag">3. 용어 정리</div>
+      </div>
+      <div class="slide-body">
+        <div class="card">
+          <div class="card-title">표본과 통계량</div>
+          <ul class="stylish-list">
+            <li><strong>통계량 (statistic) :</strong> 표본의 함수</li>
+            <li><strong>표본분포 (sampling dist) :</strong> 통계량의 분포</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- 17. 3.6 확률분포의 관계 -->
+    <div class="slide">
+      <div class="slide-header">
+        <div class="header-left">
+          <div class="slide-category">1강 통계적 추론의 기초개념</div>
+          <div class="slide-title">3.6 확률분포의 관계</div>
+        </div>
+        <div class="slide-tag">3. 용어 정리</div>
+      </div>
+      <div class="slide-body">
+        <div class="card" style="text-align: center;">
+          <img src="img/img_1.png" alt="확률분포의 관계" style="width: 100%; max-width: 540px; height: auto; display: inline-block;">
+        </div>
+      </div>
+    </div>
+
+    <!-- 18. 3.7 통계적 추론의 구조 -->
+    <div class="slide">
+      <div class="slide-header">
+        <div class="header-left">
+          <div class="slide-category">1강 통계적 추론의 기초개념</div>
+          <div class="slide-title">3.7 통계적 추론의 구조</div>
+        </div>
+        <div class="slide-tag">3. 용어 정리</div>
+      </div>
+      <div class="slide-body">
+        <div class="card" style="text-align: center;">
+          <div class="card-title">통계추론 과정</div>
+          <img src="img/img_2.png" alt="통계적 추론의 구조" style="width: 100%; max-width: 540px; height: auto; display: inline-block;">
+        </div>
+      </div>
+    </div>
+
+    <!-- 19. 4.2 통계적 추론 -->
+    <div class="slide">
+      <div class="slide-header">
+        <div class="header-left">
+          <div class="slide-category">1강 통계적 추론의 기초개념</div>
+          <div class="slide-title">4.2 통계적 추론</div>
+        </div>
+        <div class="slide-tag">4. 통계적 추론</div>
+      </div>
+      <div class="slide-body">
+        <div class="card">
+          <div class="card-title">추론의 방향성</div>
+          <ul class="stylish-list">
+            <li><strong>통계적 추론 :</strong> 모집단에서 추출한 표본으로부터 모집단의 확률분포(모수)를 추측</li>
+            <li><strong>이론적 부분 :</strong> 연역적 추론</li>
+            <li><strong>데이터 분석 :</strong> 귀납적 추론</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- 20. 4.2 통계이론 vs 데이터분석 -->
+    <div class="slide">
+      <div class="slide-header">
+        <div class="header-left">
+          <div class="slide-category">1강 통계적 추론의 기초개념</div>
+          <div class="slide-title">4.2 통계이론과 데이터분석</div>
+        </div>
+        <div class="slide-tag">4. 통계적 추론</div>
+      </div>
+      <div class="slide-body">
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-title">통계이론</div>
+            <p>상자에서 임의로 추출했을 때 주황색 공 <math><mi>x</mi></math>개 나올 확률은?</p>
+          </div>
+          <div class="card">
+            <div class="card-title">데이터분석</div>
+            <p>상자에서 공 100개를 뽑았을 때 이 중 40개가 주황색 공이라면 이 상자에는 주황색 공의 비율이 몇 %일까?</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 21. 4.3 추정과 검정 -->
+    <div class="slide">
+      <div class="slide-header">
+        <div class="header-left">
+          <div class="slide-category">1강 통계적 추론의 기초개념</div>
+          <div class="slide-title">4.3 추정과 검정</div>
+        </div>
+        <div class="slide-tag">4. 통계적 추론</div>
+      </div>
+      <div class="slide-body">
+        <div class="card">
+          <div class="card-title">추정과 검정의 정의</div>
+          <ul class="stylish-list">
+            <li><strong>추정 :</strong> 표본으로 모집단에 대한 일반적 결론을 도출하는 방법</li>
+            <li><strong>검정 :</strong> 모집단에 대한 주장에 대해 표본을 통해 그 주장의 타당성을 점검하는 방법</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- 22. 4.4 통계적 추론의 분야 -->
+    <div class="slide">
+      <div class="slide-header">
+        <div class="header-left">
+          <div class="slide-category">1강 통계적 추론의 기초개념</div>
+          <div class="slide-title">4.4 통계적 추론의 분야</div>
+        </div>
+        <div class="slide-tag">4. 통계적 추론</div>
+      </div>
+      <div class="slide-body">
+        <div class="card">
+          <div class="card-title">주요 학문 영역</div>
+          <ul class="stylish-list">
+            <li><strong>확률이론 :</strong> 확률분포, 표본분포</li>
+            <li><strong>추론이론 :</strong> 추정법, 검정법
+              <ul>
+                <li>빈도론자 (frequentist)의 추론</li>
+                <li>베이즈주의자 (Bayesian)의 추론</li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- 23. 5.1 통계적 추론의 원리 -->
+    <div class="slide">
+      <div class="slide-header">
+        <div class="header-left">
+          <div class="slide-category">1강 통계적 추론의 기초개념</div>
+          <div class="slide-title">5.1 통계적 추론의 기본 원리</div>
+        </div>
+        <div class="slide-tag">5. 통계적 추론의 원리</div>
+      </div>
+      <div class="slide-body">
+        <div class="card">
+          <div class="card-title">핵심 원리</div>
+          <ul class="stylish-list">
+            <li>가장 가능성(확률) 높은 결론을 낸다.</li>
+            <li>가능성 낮은 일은 믿지 않는다.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- 24. 5.1 모집단 변수 및 확률표본 -->
+    <div class="slide">
+      <div class="slide-header">
+        <div class="header-left">
+          <div class="slide-category">1강 통계적 추론의 기초개념</div>
+          <div class="slide-title">5.1 확률표본의 설정</div>
+        </div>
+        <div class="slide-tag">5. 통계적 추론의 원리</div>
+      </div>
+      <div class="slide-body">
+        <div class="card">
+          <div class="card-title">모집단 확률변수</div>
+          <div class="math-card">
+            <math>
+              <mi>X</mi><mo>~</mo><mi>f</mi><mo stretchy="false">(</mo><mi>x</mi><mo>&#x7C;</mo><mi>&#x3B8;</mi><mo stretchy="false">)</mo>
+              <mspace width="1.5em"/><mtext>【예】</mtext><mspace width="0.8em"/><mi>N</mi><mo stretchy="false">(</mo><mi>&#x3BC;</mi><mo>,</mo><msup><mi>&#x3C3;</mi><mn>2</mn></msup><mo stretchy="false">)</mo>
+            </math>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">표본 추출</div>
+          <div class="math-card">
+            <math>
+              <msub><mi>X</mi><mn>1</mn></msub><mo>,</mo><msub><mi>X</mi><mn>2</mn></msub><mo>,</mo><mo>&#x2026;</mo><mo>,</mo><msub><mi>X</mi><mi>n</mi></msub><mo>~</mo><mi>f</mi><mo stretchy="false">(</mo><mi>x</mi><mo>&#x7C;</mo><mi>&#x3B8;</mi><mo stretchy="false">)</mo>
+            </math>
+          </div>
+          <p style="color: var(--text-muted); font-size: 16px; margin-top: 6px;">서로 독립이고 동일한 분포를 가지는 확률표본</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 25. 5.1 모수에 적합한 통계량 -->
+    <div class="slide">
+      <div class="slide-header">
+        <div class="header-left">
+          <div class="slide-category">1강 통계적 추론의 기초개념</div>
+          <div class="slide-title">5.1 통계량과 표본분포 활용</div>
+        </div>
+        <div class="slide-tag">5. 통계적 추론의 원리</div>
+      </div>
+      <div class="slide-body">
+        <div class="card">
+          <div class="card-title">모수에 적합한 통계량(추정량) 이용</div>
+          <p>【예】 <math><mi>N</mi><mo stretchy="false">(</mo><mi>&#x3BC;</mi><mo>,</mo><msup><mi>&#x3C3;</mi><mn>2</mn></msup><mo stretchy="false">)</mo></math> : <math><mi>&#x3BC;</mi></math>를 위한 추정량 <math><mover><mi>X</mi><mo accent="true">&#xAF;</mo></mover></math></p>
+        </div>
+        <div class="card">
+          <div class="card-title">통계량의 분포(표본분포)를 바탕으로 추정과 검정</div>
+          <p>추정량 <math><mover><mi>X</mi><mo accent="true">&#xAF;</mo></mover></math>의 분포 → 정규분포, <math><mi>t</mi></math>분포</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 26. 5.2 가능도 원리 -->
+    <div class="slide">
+      <div class="slide-header">
+        <div class="header-left">
+          <div class="slide-category">1강 통계적 추론의 기초개념</div>
+          <div class="slide-title">5.2 가능도 원리 (Likelihood Principle)</div>
+        </div>
+        <div class="slide-tag">5. 통계적 추론의 원리</div>
+      </div>
+      <div class="slide-body">
+        <div class="card">
+          <div class="card-title">가능도 원리</div>
+          <ul class="stylish-list">
+            <li>표본의 가능도함수에 표본으로부터 나타날 수 있는 모수의 모든 정보를 가지고 있음</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- 27. 5.2 충분성 원리 -->
+    <div class="slide">
+      <div class="slide-header">
+        <div class="header-left">
+          <div class="slide-category">1강 통계적 추론의 기초개념</div>
+          <div class="slide-title">5.2 충분성 원리 (Sufficiency Principle)</div>
+        </div>
+        <div class="slide-tag">5. 통계적 추론의 원리</div>
+      </div>
+      <div class="slide-body">
+        <div class="card">
+          <div class="card-title">충분성 원리</div>
+          <ul class="stylish-list">
+            <li>표본 전체가 가진 모수에 관한 모든 정보가 통계량에 온전히 보존</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- 28. 5.3 좋은 통계량 -->
+    <div class="slide">
+      <div class="slide-header">
+        <div class="header-left">
+          <div class="slide-category">1강 통계적 추론의 기초개념</div>
+          <div class="slide-title">5.3 좋은 통계량</div>
+        </div>
+        <div class="slide-tag">5. 통계적 추론의 원리</div>
+      </div>
+      <div class="slide-body">
+        <div class="card" style="text-align: center;">
+          <div class="card-title">좋은 통계량의 비교 (과녁)</div>
+          <img src="img/img_3.png" alt="좋은 통계량" style="width: 100%; max-width: 500px; height: auto; display: inline-block;">
+        </div>
+      </div>
+    </div>
+
+    <!-- 29. 5.4 통계량의 선택 (기준) -->
+    <div class="slide">
+      <div class="slide-header">
+        <div class="header-left">
+          <div class="slide-category">1강 통계적 추론의 기초개념</div>
+          <div class="slide-title">5.4 통계량의 선택 기준</div>
+        </div>
+        <div class="slide-tag">5. 통계적 추론의 원리</div>
+      </div>
+      <div class="slide-body">
+        <div class="card">
+          <div class="card-title">좋은 통계량의 조건</div>
+          <ul class="stylish-list">
+            <li><strong>불편성 (unbiasedness) :</strong> 추정량의 기댓값이 참값인 모수와 일치</li>
+            <li><strong>효율성 (efficiency) :</strong> 추정량의 분산이 작음</li>
+            <li><strong>일치성 (consistency) :</strong> 표본 크기가 커질수록 모수에 수렴</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- 30. 5.4 평균제곱오차 -->
+    <div class="slide">
+      <div class="slide-header">
+        <div class="header-left">
+          <div class="slide-category">1강 통계적 추론의 기초개념</div>
+          <div class="slide-title">5.4 평균제곱오차</div>
+        </div>
+        <div class="slide-tag">5. 통계적 추론의 원리</div>
+      </div>
+      <div class="slide-body">
+        <div class="card">
+          <div class="card-title">평균제곱오차 (MSE)</div>
+          <ul class="stylish-list">
+            <li>모수와 추정량 사이의 손실함수의 기댓값 : 불편성과 효율성을 동시 고려</li>
+            <li>정규분포 모집단에서의 표본평균 : 모평균 추정에 있어 불편성과 효율성을 갖춘 통계량</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- 31. 5.5 통계검정 -->
+    <div class="slide">
+      <div class="slide-header">
+        <div class="header-left">
+          <div class="slide-category">1강 통계적 추론의 기초개념</div>
+          <div class="slide-title">5.5 통계검정의 기본 요소</div>
+        </div>
+        <div class="slide-tag">5. 통계적 추론의 원리</div>
+      </div>
+      <div class="slide-body">
+        <div class="card">
+          <div class="card-title">가설과 오류</div>
+          <ul class="stylish-list">
+            <li><strong>귀무가설과 대립가설</strong></li>
+            <li><strong>제1종의 오류 :</strong> 귀무가설이 참인데 기각할 오류</li>
+            <li><strong>제2종의 오류 :</strong> 귀무가설이 거짓인데 채택할 오류</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- 32. 5.5 최적검정 -->
+    <div class="slide">
+      <div class="slide-header">
+        <div class="header-left">
+          <div class="slide-category">1강 통계적 추론의 기초개념</div>
+          <div class="slide-title">5.5 최적의 검정</div>
+        </div>
+        <div class="slide-tag">5. 통계적 추론의 원리</div>
+      </div>
+      <div class="slide-body">
+        <div class="card">
+          <div class="card-title">최적 검정의 원칙</div>
+          <ul class="stylish-list">
+            <li><strong>최적의 검정 :</strong> 주어진 제1종의 오류의 기준 하에서 제2종의 오류를 최소화하는 검정</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+  <!-- 33. 시 -->
+    <div class="slide">
+      <div class="slide-header">
+        <div class="header-left">
+          <div class="slide-category">데이터지능</div>
+          <div class="slide-title">통계적으로 생각하는 법</div>
+        </div>
+        <div class="slide-tag">데이터지능</div>
+      </div>
+      <div class="slide-body">
+        <div class="card" style="padding: 22px;">
+          <!-- 가장 기본적이고 안정적인 좌우 분할 테이블 -->
+          <table style="width: 100%; border-collapse: collapse; border: none;">
+            <tr>
+              <!-- 왼쪽: 시 영역 -->
+              <td style="vertical-align: middle; width: 62%; padding-right: 24px;">
+                <p style="white-space: pre-line; line-height: 1.8; color: #1e293b; font-size: 18px; margin: 0;">
+세상은 늘 변해가 확신 없는 빛 속에서
+우린 작은 조각들을 모아 의미를 찾아가
+모든 걸 볼 순 없지만 그 일부로 세상을 느껴
+확률이라는 언어로 진실에 다가서
+불확실한 세상 속 우린 질문을 던져
+가장 가능성 높은 꿈을 조심스레 그려가
+낮은 믿음은 흘려보내고 의심 속에서 빛을 찾아가
+실험 속 작은 신호들 의미를 품고 다가와
+그 안에서 우리는 숨어 있는 진심을 봐
+단 한 번의 답이 아닌 수천 번의 생각으로
+우리는 추측하고 또 다시 검증해
+                </p>
+              </td>
+              <!-- 오른쪽: 책 표지 이미지 영역 -->
+              <td style="vertical-align: middle; width: 38%; text-align: center;">
+                <img src="img/datai.jpg" alt="데이터 지능 책 표지" style="max-height: 420px; max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); display: inline-block;">
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- 34. 데이터 지능 및 유튜브 -->
+    <div class="slide">
+      <div class="slide-header">
+        <div class="header-left">
+          <div class="slide-category">영상</div>
+          <div class="slide-title">데이터 지능</div>
+        </div>
+        <div class="slide-tag">YouTube 영상</div>
+      </div>
+      <div class="slide-body">
+        <div class="card" style="display: flex; justify-content: center; align-items: center; padding: 24px;">
+          <a href="https://www.youtube.com/watch?v=zL7YMccXfaQ" target="_blank" rel="noopener noreferrer" style="text-decoration: none; display: inline-block;">
+            <div style="position: relative; width: 480px; height: 270px; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);">
+              <img src="https://img.youtube.com/vi/zL7YMccXfaQ/hqdefault.jpg" alt="유튜브 썸네일" style="width: 100%; height: 100%; object-fit: cover; display: block;">
+              <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(220, 38, 38, 0.9); width: 68px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center;">
+                <div style="width: 0; height: 0; border-top: 10px solid transparent; border-bottom: 10px solid transparent; border-left: 18px solid white; margin-left: 4px;"></div>
+              </div>
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- 35. 6.1 통계학의 역사 개요 -->
+    <div class="slide">
+      <div class="slide-header">
+        <div class="header-left">
+          <div class="slide-category">1강 통계적 추론의 기초개념</div>
+          <div class="slide-title">6.1 통계학의 역사</div>
+        </div>
+        <div class="slide-tag">6. 통계학의 역사</div>
+      </div>
+      <div class="slide-body">
+        <div class="card">
+          <div class="card-title">시대별 주요 패러다임</div>
+          <ul class="stylish-list">
+            <li><strong>17세기 - 18세기 중 :</strong> 확률의 시대</li>
+            <li><strong>18세기 중 - 19세기 중 :</strong> 오차이론의 시대</li>
+            <li><strong>19세기 중 후 :</strong> 통계의 시대</li>
+            <li><strong>20세기 초 중 :</strong> 통계적 추론의 시대</li>
+            <li><strong>21세기 :</strong> 데이터과학의 시대</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- 36. 6.1 통계학의 발전 과정 (Efron & Hastie 2016) -->
+    <div class="slide">
+      <div class="slide-header">
+        <div class="header-left">
+          <div class="slide-category">1강 통계적 추론의 기초개념</div>
+          <div class="slide-title">6.1 통계학의 발전 (Efron and Hastie, 2016)</div>
+        </div>
+        <div class="slide-tag">6. 통계학의 역사</div>
+      </div>
+      <div class="slide-body">
+        <div class="card" style="text-align: center;">
+          <div class="card-title">역사적 흐름 (Applications, Mathematics, Computation)</div>
+          <img src="img/img_4.png" alt="통계학의 발전 흐름" style="width: 100%; max-width: 500px; height: auto; display: inline-block;">
+        </div>
+      </div>
+    </div>
+
+    <!-- 37. 2강 1.1 통계적 추론과 확률 -->
+    <div class="slide">
+      <div class="slide-header">
+        <div class="header-left">
+          <div class="slide-category">2강 통계학과 확률</div>
+          <div class="slide-title">1.1 통계적 추론과 확률</div>
+        </div>
+        <div class="slide-tag">1. 확률의 정의</div>
+      </div>
+      <div class="slide-body">
+        <div class="card">
+          <div class="card-title">불확실성과 확률</div>
+          <ul class="stylish-list">
+            <li>우리가 알고자 하는 세계인 모집단은 불확실</li>
+            <li>불확실성은 확률, 확률분포로 측정</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- 38. 2강 1.2 확률의 고전적 정의 -->
+    <div class="slide">
+      <div class="slide-header">
+        <div class="header-left">
+          <div class="slide-category">2강 통계학과 확률</div>
+          <div class="slide-title">1.2 확률의 고전적 정의</div>
+        </div>
+        <div class="slide-tag">1. 확률의 정의</div>
+      </div>
+      <div class="slide-body">
+        <div class="card">
+          <div class="card-title">확률실험과 표본공간</div>
+          <ul class="stylish-list">
+            <li>확률은 동전던지기와 같은 확률 실험으로 이해
+              <ul>
+                <li>동전 던지기, 주사위던지기</li>
+                <li>확률실험의 규칙성</li>
+              </ul>
+            </li>
+            <li><strong>표본공간 (sample space) :</strong> 이산형, 연속형</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- 39. 2강 1.4 확률의 공리적 정의 -->
+    <div class="slide">
+      <div class="slide-header">
+        <div class="header-left">
+          <div class="slide-category">2강 통계학과 확률</div>
+          <div class="slide-title">1.4 확률의 공리적 정의</div>
+        </div>
+        <div class="slide-tag">1. 확률의 정의</div>
+      </div>
+      <div class="slide-body">
+        <div class="card">
+          <div class="card-title">사건의 확률 계산</div>
+          <p>사건(event) : 표본공간의 부분집합</p>
+          <div class="math-card">
+            <math>
+              <mtext>이산형 :&#160;</mtext><mi>P</mi><mo stretchy="false">(</mo><mi>A</mi><mo stretchy="false">)</mo><mo>=</mo><mfrac><mrow><mi>n</mi><mo stretchy="false">(</mo><mi>A</mi><mo stretchy="false">)</mo></mrow><mrow><mi>n</mi><mo stretchy="false">(</mo><mi>S</mi><mo stretchy="false">)</mo></mrow></mfrac>
+              <mspace width="2em"/>
+              <mtext>연속형 :&#160;</mtext><mi>P</mi><mo stretchy="false">(</mo><mi>A</mi><mo stretchy="false">)</mo><mo>=</mo><mfrac><mrow><mi>m</mi><mo stretchy="false">(</mo><mi>A</mi><mo stretchy="false">)</mo></mrow><mrow><mi>m</mi><mo stretchy="false">(</mo><mi>B</mi><mo stretchy="false">)</mo></mrow></mfrac>
+            </math>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">콜모고로프의 공리적 정의</div>
+          <ul class="stylish-list">
+            <li><math><mn>0</mn><mo>&#x2264;</mo><mi>P</mi><mo stretchy="false">(</mo><mi>A</mi><mo stretchy="false">)</mo><mo>&#x2264;</mo><mn>1</mn></math></li>
+            <li><math><mi>P</mi><mo stretchy="false">(</mo><mi>S</mi><mo stretchy="false">)</mo><mo>=</mo><mn>1</mn></math></li>
+            <li><math><msub><mi>A</mi><mn>1</mn></msub><mo>,</mo><mo>&#x2026;</mo><mo>,</mo><msub><mi>A</mi><mi>i</mi></msub><mo>,</mo><mo>&#x2026;</mo></math> 서로 배반일 때: 
+              <math>
+                <mi>P</mi><mo stretchy="false">(</mo><munderover><mo>&#x22C3;</mo><mrow><mi>i</mi><mo>=</mo><mn>1</mn></mrow><mi>&#x221E;</mi></munderover><msub><mi>A</mi><mi>i</mi></msub><mo stretchy="false">)</mo><mo>=</mo><munderover><mo>&#x2211;</mo><mrow><mi>i</mi><mo>=</mo><mn>1</mn></mrow><mi>&#x221E;</mi></munderover><mi>P</mi><mo stretchy="false">(</mo><msub><mi>A</mi><mi>i</mi></msub><mo stretchy="false">)</mo>
+              </math>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- 40. 2강 2.1 조건부 확률 -->
+    <div class="slide">
+      <div class="slide-header">
+        <div class="header-left">
+          <div class="slide-category">2강 통계학과 확률</div>
+          <div class="slide-title">2.1 조건부 확률</div>
+        </div>
+        <div class="slide-tag">2. 조건부 확률과 독립</div>
+      </div>
+      <div class="slide-body">
+        <div class="card">
+          <div class="card-title">조건부 확률의 정의</div>
+          <p>사건 <math><mi>B</mi></math> 발생 조건 하 사건 <math><mi>A</mi></math>가 발생할 조건부 확률:</p>
+          <div class="math-card">
+            <math>
+              <mi>P</mi><mo stretchy="false">(</mo><mi>A</mi><mo>&#x7C;</mo><mi>B</mi><mo stretchy="false">)</mo><mo>=</mo><mfrac><mrow><mi>P</mi><mo stretchy="false">(</mo><mi>A</mi><mo>&#x2229;</mo><mi>B</mi><mo stretchy="false">)</mo></mrow><mrow><mi>P</mi><mo stretchy="false">(</mo><mi>B</mi><mo stretchy="false">)</mo></mrow></mfrac>
+            </math>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 41. 2강 2.2 역확률 -->
+    <div class="slide">
+      <div class="slide-header">
+        <div class="header-left">
+          <div class="slide-category">2. 조건부 확률과 독립</div>
+          <div class="slide-title">2.2 베이즈 정리</div>
+        </div>
+        <div class="slide-tag">2. 조건부 확률과 독립</div>
+      </div>
+      <div class="slide-body">
+        <div class="card">
+          <div class="card-title">역확률 (inverse probability)</div>
+          <p><math><mi>P</mi><mo stretchy="false">(</mo><mi>A</mi><mo>&#x7C;</mo><mi>B</mi><mo stretchy="false">)</mo><mo>&#x2192;</mo><mi>P</mi><mo stretchy="false">(</mo><mi>B</mi><mo>&#x7C;</mo><mi>A</mi><mo stretchy="false">)</mo></math></p>
+          <div class="math-card">
+            <math>
+              <mi>P</mi><mo stretchy="false">(</mo><mi>B</mi><mo>&#x7C;</mo><mi>A</mi><mo stretchy="false">)</mo><mo>=</mo><mfrac><mrow><mi>P</mi><mo stretchy="false">(</mo><mi>A</mi><mo>&#x2229;</mo><mi>B</mi><mo stretchy="false">)</mo></mrow><mrow><mi>P</mi><mo stretchy="false">(</mo><mi>A</mi><mo stretchy="false">)</mo></mrow></mfrac><mo>=</mo><mfrac><mrow><mi>P</mi><mo stretchy="false">(</mo><mi>A</mi><mo>&#x7C;</mo><mi>B</mi><mo stretchy="false">)</mo><mi>P</mi><mo stretchy="false">(</mo><mi>B</mi><mo stretchy="false">)</mo></mrow><mrow><mi>P</mi><mo stretchy="false">(</mo><mi>A</mi><mo stretchy="false">)</mo></mrow></mfrac>
+            </math>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 42. 2강 2.4 독립성 -->
+    <div class="slide">
+      <div class="slide-header">
+        <div class="header-left">
+          <div class="slide-category">2. 조건부 확률과 독립</div>
+          <div class="slide-title">2.4 독립성</div>
+        </div>
+        <div class="slide-tag">2. 조건부 확률과 독립</div>
+      </div>
+      <div class="slide-body">
+        <div class="card">
+          <div class="card-title">두 사건의 독립</div>
+          <p>사건 <math><mi>A</mi></math>와 사건 <math><mi>B</mi></math>는 서로 독립(independent):</p>
+          <div class="math-card">
+            <math>
+              <mi>P</mi><mo stretchy="false">(</mo><mi>B</mi><mo>&#x7C;</mo><mi>A</mi><mo stretchy="false">)</mo><mo>=</mo><mi>P</mi><mo stretchy="false">(</mo><mi>B</mi><mo stretchy="false">)</mo>
+              <mspace width="1.5em"/><mo>&#x2192;</mo><mspace width="1.5em"/>
+              <mi>P</mi><mo stretchy="false">(</mo><mi>A</mi><mo>&#x2229;</mo><mi>B</mi><mo stretchy="false">)</mo><mo>=</mo><mi>P</mi><mo stretchy="false">(</mo><mi>A</mi><mo stretchy="false">)</mo><mi>P</mi><mo stretchy="false">(</mo><mi>B</mi><mo stretchy="false">)</mo>
+            </math>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">n개 사건의 독립</div>
+          <div class="math-card">
+            <math>
+              <mi>P</mi><mo stretchy="false">(</mo><msub><mi>A</mi><mn>1</mn></msub><mo>&#x2229;</mo><mo>&#x2026;</mo><mo>&#x2229;</mo><msub><mi>A</mi><mi>n</mi></msub><mo stretchy="false">)</mo><mo>=</mo><mi>P</mi><mo stretchy="false">(</mo><msub><mi>A</mi><mn>1</mn></msub><mo stretchy="false">)</mo><mo>&#x22EF;</mo><mi>P</mi><mo stretchy="false">(</mo><msub><mi>A</mi><mi>n</mi></msub><mo stretchy="false">)</mo>
+            </math>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 43. 3강 3.1 확률변수 -->
+    <div class="slide">
+      <div class="slide-header">
+        <div class="header-left">
+          <div class="slide-category">3강 통계학과 확률</div>
+          <div class="slide-title">3.1 확률변수</div>
+        </div>
+        <div class="slide-tag">3. 확률변수와 확률분포</div>
+      </div>
+      <div class="slide-body">
+        <div class="card">
+          <div class="card-title">정의 및 특징</div>
+          <ul class="stylish-list">
+            <li><strong>확률변수 (Random Variable) :</strong> 사건을 숫자로 변환해 주는 함수</li>
+            <li>표본공간을 정의역, 실수를 공역으로 하는 함수</li>
+            <li>이산형, 연속형</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- 44. 3강 3.2 누적확률분포함수 -->
+    <div class="slide">
+      <div class="slide-header">
+        <div class="header-left">
+          <div class="slide-category">3강 통계학과 확률</div>
+          <div class="slide-title">3.2 확률분포 및 누적분포함수</div>
+        </div>
+        <div class="slide-tag">3. 확률변수와 확률분포</div>
+      </div>
+      <div class="slide-body">
+        <div class="card">
+          <div class="card-title">확률분포</div>
+          <p>확률변수 <math><mi>X</mi></math>로부터 유도되는 측도 <math><mi>P</mi></math></p>
+        </div>
+        <div class="card">
+          <div class="card-title">누적확률분포함수 (CDF)</div>
+          <div class="math-card">
+            <math>
+              <mi>F</mi><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo><mo>=</mo><mi>P</mi><mo stretchy="false">(</mo><mi>X</mi><mo>&#x2264;</mo><mi>x</mi><mo stretchy="false">)</mo><mo>=</mo><mi>P</mi><mo stretchy="false">(</mo><mo stretchy="false">(</mo><mo>&#x2212;</mo><mi>&#x221E;</mi><mo>,</mo><mi>x</mi><mo stretchy="false">]</mo><mo stretchy="false">)</mo>
+            </math>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 45. 3강 3.2 점확률 표현 -->
+    <div class="slide">
+      <div class="slide-header">
+        <div class="header-left">
+          <div class="slide-category">3강 통계학과 확률</div>
+          <div class="slide-title">3.2 점확률로 표현되는 확률분포</div>
+        </div>
+        <div class="slide-tag">3. 확률변수와 확률분포</div>
+      </div>
+      <div class="slide-body">
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-title">확률질량함수 (PMF)</div>
+            <p>이산형 확률변수의 분포를 나타내는 함수</p>
+          </div>
+          <div class="card">
+            <div class="card-title">확률밀도함수 (PDF)</div>
+            <p>연속형 확률변수의 분포를 나타내는 함수</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 46. 3강 3.2 확률질량함수 -->
+    <div class="slide">
+      <div class="slide-header">
+        <div class="header-left">
+          <div class="slide-category">3강 통계학과 확률</div>
+          <div class="slide-title">3.2 확률질량함수 (PMF)</div>
+        </div>
+        <div class="slide-tag">3. 확률변수와 확률분포</div>
+      </div>
+      <div class="slide-body">
+        <div class="card">
+          <div class="card-title">이산형 확률변수 X의 분포</div>
+          <div class="math-card">
+            <math>
+              <mi>f</mi><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo><mo>=</mo><mi>P</mi><mo stretchy="false">(</mo><mi>X</mi><mo>=</mo><mi>x</mi><mo stretchy="false">)</mo><mo>,</mo><mspace width="1.5em"/><mi>x</mi><mo>=</mo><mn>0</mn><mo>,</mo><mn>1</mn><mo>,</mo><mn>2</mn><mo>,</mo><mo>&#x2026;</mo>
+            </math>
+          </div>
+          <div class="math-card">
+            <math>
+              <mi>F</mi><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo><mo>=</mo><mi>P</mi><mo stretchy="false">(</mo><mi>X</mi><mo>&#x2264;</mo><mi>x</mi><mo stretchy="false">)</mo><mo>=</mo><munderover><mo>&#x2211;</mo><mrow><mi>t</mi><mo>=</mo><mn>0</mn></mrow><mi>x</mi></munderover><mi>f</mi><mo stretchy="false">(</mo><mi>t</mi><mo stretchy="false">)</mo>
+            </math>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 47. 3강 3.2 확률질량함수의 성질 -->
+    <div class="slide">
+      <div class="slide-header">
+        <div class="header-left">
+          <div class="slide-category">3강 통계학과 확률</div>
+          <div class="slide-title">3.2 확률질량함수의 성질</div>
+        </div>
+        <div class="slide-tag">3. 확률변수와 확률분포</div>
+      </div>
+      <div class="slide-body">
+        <div class="card">
+          <div class="card-title">기본 성질</div>
+          <ul class="stylish-list">
+            <li><math><mn>0</mn><mo>&#x2264;</mo><mi>f</mi><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo><mo>&#x2264;</mo><mn>1</mn><mo>,</mo><mspace width="1.5em"/><mi>x</mi><mo>=</mo><mn>0</mn><mo>,</mo><mn>1</mn><mo>,</mo><mn>2</mn><mo>,</mo><mo>&#x2026;</mo></math></li>
+            <li><math><munderover><mo>&#x2211;</mo><mrow><mi>x</mi><mo>=</mo><mn>0</mn></mrow><mi>&#x221E;</mi></munderover><mi>f</mi><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo><mo>=</mo><mn>1</mn></math></li>
+            <li><math><mi>P</mi><mo stretchy="false">(</mo><mi>a</mi><mo>&#x2264;</mo><mi>X</mi><mo>&#x2264;</mo><mi>b</mi><mo stretchy="false">)</mo><mo>=</mo><munderover><mo>&#x2211;</mo><mrow><mi>x</mi><mo>=</mo><mi>a</mi></mrow><mi>b</mi></munderover><mi>f</mi><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo></math></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- 48. 3강 3.2 확률밀도함수 -->
+    <div class="slide">
+      <div class="slide-header">
+        <div class="header-left">
+          <div class="slide-category">3강 통계학과 확률</div>
+          <div class="slide-title">3.2 확률밀도함수 (PDF)</div>
+        </div>
+        <div class="slide-tag">3. 확률변수와 확률분포</div>
+      </div>
+      <div class="slide-body">
+        <div class="card">
+          <div class="card-title">연속형 확률변수 X의 분포</div>
+          <div class="math-card">
+            <math>
+              <mi>F</mi><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo><mo>=</mo><msubsup><mo>&#x222B;</mo><mrow><mo>&#x2212;</mo><mi>&#x221E;</mi></mrow><mi>x</mi></msubsup><mi>f</mi><mo stretchy="false">(</mo><mi>t</mi><mo stretchy="false">)</mo><mi>d</mi><mi>t</mi>
+              <mspace width="2.5em"/>
+              <mi>f</mi><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo><mo>=</mo><mfrac><mi>d</mi><mrow><mi>d</mi><mi>x</mi></mrow></mfrac><mi>F</mi><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo>
+            </math>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 49. 3강 3.2 확률밀도함수의 성질 -->
+    <div class="slide">
+      <div class="slide-header">
+        <div class="header-left">
+          <div class="slide-category">3강 통계학과 확률</div>
+          <div class="slide-title">3.2 확률밀도함수의 성질</div>
+        </div>
+        <div class="slide-tag">3. 확률변수와 확률분포</div>
+      </div>
+      <div class="slide-body">
+        <div class="card">
+          <div class="card-title">기본 성질</div>
+          <ul class="stylish-list">
+            <li><math><mi>f</mi><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo><mo>&#x2265;</mo><mn>0</mn></math></li>
+            <li><math><msubsup><mo>&#x222B;</mo><mrow><mo>&#x2212;</mo><mi>&#x221E;</mi></mrow><mi>&#x221E;</mi></msubsup><mi>f</mi><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo><mi>d</mi><mi>x</mi><mo>=</mo><mn>1</mn></math></li>
+            <li><math><mi>P</mi><mo stretchy="false">(</mo><mi>a</mi><mo>&#x2264;</mo><mi>X</mi><mo>&#x2264;</mo><mi>b</mi><mo stretchy="false">)</mo><mo>=</mo><msubsup><mo>&#x222B;</mo><mi>a</mi><mi>b</mi></msubsup><mi>f</mi><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo><mi>d</mi><mi>x</mi></math></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- 50. 2강 3.1 기댓값의 정의 -->
+    <div class="slide">
+      <div class="slide-header">
+        <div class="header-left">
+          <div class="slide-category">2강 통계학과 확률</div>
+          <div class="slide-title">3.1 기댓값의 정의</div>
+        </div>
+        <div class="slide-tag">3. 기댓값</div>
+      </div>
+      <div class="slide-body">
+        <div class="card">
+          <div class="card-title">확률분포의 무게중심 E(X)</div>
+          <div class="math-card">
+            <math>
+              <mi>E</mi><mo stretchy="false">(</mo><mi>X</mi><mo stretchy="false">)</mo><mo>=</mo>
+              <mrow>
+                <mo>{</mo>
+                <mtable columnalign="left left">
+                  <mtr>
+                    <mtd><munderover><mo>&#x2211;</mo><mrow><mi>x</mi><mo>=</mo><mn>0</mn></mrow><mi>&#x221E;</mi></munderover><mi>x</mi><mi>f</mi><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo><mo>,</mo></mtd>
+                    <mtd><mi>X</mi><mo>:</mo><mtext>&#160;이산형 확률변수</mtext></mtd>
+                  </mtr>
+                  <mtr>
+                    <mtd><msubsup><mo>&#x222B;</mo><mrow><mo>&#x2212;</mo><mi>&#x221E;</mi></mrow><mi>&#x221E;</mi></msubsup><mi>x</mi><mi>f</mi><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo><mi>d</mi><mi>x</mi><mo>,</mo></mtd>
+                    <mtd><mi>X</mi><mo>:</mo><mtext>&#160;연속형 확률변수</mtext></mtd>
+                  </mtr>
+                </mtable>
+              </mrow>
+            </math>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 51. 2강 3.3 분산과 표준편차 -->
+    <div class="slide">
+      <div class="slide-header">
+        <div class="header-left">
+          <div class="slide-category">2강 통계학과 확률</div>
+          <div class="slide-title">3.3 분산과 표준편차</div>
+        </div>
+        <div class="slide-tag">3. 기댓값</div>
+      </div>
+      <div class="slide-body">
+        <div class="card">
+          <div class="card-title">분산 (Variance)</div>
+          <p>중심(기댓값)으로부터 흩어진 정도 측정</p>
+          <div class="math-card">
+            <math>
+              <mi>V</mi><mi>a</mi><mi>r</mi><mo stretchy="false">(</mo><mi>X</mi><mo stretchy="false">)</mo><mo>=</mo><mi>E</mi><mo stretchy="false">[</mo><mo stretchy="false">(</mo><mi>X</mi><mo>&#x2212;</mo><mi>E</mi><mo stretchy="false">(</mo><mi>X</mi><mo stretchy="false">)</mo><msup><mo stretchy="false">)</mo><mn>2</mn></msup><mo stretchy="false">]</mo><mo>=</mo><mi>E</mi><mo stretchy="false">(</mo><msup><mi>X</mi><mn>2</mn></msup><mo stretchy="false">)</mo><mo>&#x2212;</mo><mo stretchy="false">[</mo><mi>E</mi><mo stretchy="false">(</mo><mi>X</mi><mo stretchy="false">)</mo><msup><mo stretchy="false">]</mo><mn>2</mn></msup>
+            </math>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">표준편차 (Standard Deviation)</div>
+          <div class="math-card">
+            <math>
+              <mi>S</mi><mi>d</mi><mo stretchy="false">(</mo><mi>X</mi><mo stretchy="false">)</mo><mo>=</mo><msqrt><mrow><mi>V</mi><mi>a</mi><mi>r</mi><mo stretchy="false">(</mo><mi>X</mi><mo stretchy="false">)</mo></mrow></msqrt>
+            </math>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 52. 3강 1.1 결합확률분포의 정의 -->
+    <div class="slide">
+      <div class="slide-header">
+        <div class="header-left">
+          <div class="slide-category">2강 통계학과 확률</div>
+          <div class="slide-title">4.1 결합확률밀도(질량)함수</div>
+        </div>
+        <div class="slide-tag">4. 결합확률밀도(질량)함수</div>
+      </div>
+      <div class="slide-body">
+        <div class="card">
+          <div class="card-title">다변량 확률분포</div>
+          <ul class="stylish-list">
+            <li>여러 개의 확률변수가 동시에 관측</li>
+            <li>여러 개 확률변수에 대한 분포는 결합확률밀도(질량)함수로 파악</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- 53. 3강 1.1 결합확률질량함수 -->
+    <div class="slide">
+      <div class="slide-header">
+        <div class="header-left">
+          <div class="slide-category">2강 통계학과 확률</div>
+          <div class="slide-title">4.2 결합확률질량함수</div>
+        </div>
+        <div class="slide-tag">4. 결합확률밀도(질량)함수</div>
+      </div>
+      <div class="slide-body">
+        <div class="card">
+          <div class="card-title">결합확률질량함수 수식</div>
+          <div class="math-card">
+            <math>
+              <mi>f</mi><mo stretchy="false">(</mo><mi>x</mi><mo>,</mo><mi>y</mi><mo stretchy="false">)</mo><mo>=</mo><mi>P</mi><mo stretchy="false">(</mo><mi>X</mi><mo>=</mo><mi>x</mi><mo>,</mo><mi>Y</mi><mo>=</mo><mi>y</mi><mo stretchy="false">)</mo>
+            </math>
+          </div>
+          <div class="math-card">
+            <math>
+              <mi>f</mi><mo stretchy="false">(</mo><msub><mi>x</mi><mn>1</mn></msub><mo>,</mo><mo>&#x2026;</mo><mo>,</mo><msub><mi>x</mi><mi>n</mi></msub><mo stretchy="false">)</mo><mo>=</mo><mi>P</mi><mo stretchy="false">(</mo><msub><mi>X</mi><mn>1</mn></msub><mo>=</mo><msub><mi>x</mi><mn>1</mn></msub><mo>,</mo><mo>&#x2026;</mo><mo>,</mo><msub><mi>X</mi><mi>n</mi></msub><mo>=</mo><msub><mi>x</mi><mi>n</mi></msub><mo stretchy="false">)</mo>
+            </math>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 54. 3강 1.1 결합확률밀도함수 -->
+    <div class="slide">
+      <div class="slide-header">
+        <div class="header-left">
+          <div class="slide-category">3강 통계학과 확률</div>
+          <div class="slide-title">4.3 결합확률밀도함수</div>
+        </div>
+        <div class="slide-tag">4. 결합확률밀도(질량)함수</div>
+      </div>
+      <div class="slide-body">
+        <div class="card">
+          <div class="card-title">구간 확률</div>
+          <div class="math-card">
+            <math>
+              <mi>P</mi><mo stretchy="false">(</mo><mi>a</mi><mo>&#x2264;</mo><mi>X</mi><mo>&#x2264;</mo><mi>b</mi><mo>,</mo><mi>c</mi><mo>&#x2264;</mo><mi>Y</mi><mo>&#x2264;</mo><mi>d</mi><mo stretchy="false">)</mo><mo>=</mo><msubsup><mo>&#x222B;</mo><mi>c</mi><mi>d</mi></msubsup><msubsup><mo>&#x222B;</mo><mi>a</mi><mi>b</mi></msubsup><mi>f</mi><mo stretchy="false">(</mo><mi>x</mi><mo>,</mo><mi>y</mi><mo stretchy="false">)</mo><mi>d</mi><mi>x</mi><mi>d</mi><mi>y</mi>
+            </math>
+          </div>
+          <div class="math-card">
+            <math>
+              <mi>P</mi><mo stretchy="false">(</mo><msub><mi>a</mi><mn>1</mn></msub><mo>&#x2264;</mo><msub><mi>X</mi><mn>1</mn></msub><mo>&#x2264;</mo><msub><mi>b</mi><mn>1</mn></msub><mo>,</mo><mo>&#x2026;</mo><mo>,</mo><msub><mi>a</mi><mi>n</mi></msub><mo>&#x2264;</mo><msub><mi>X</mi><mi>n</mi></msub><mo>&#x2264;</mo><msub><mi>b</mi><mi>n</mi></msub><mo stretchy="false">)</mo><mo>=</mo><msubsup><mo>&#x222B;</mo><msub><mi>a</mi><mi>n</mi></msub><msub><mi>b</mi><mi>n</mi></msub></msubsup><mo>&#x22EF;</mo><msubsup><mo>&#x222B;</mo><msub><mi>a</mi><mn>1</mn></msub><msub><mi>b</mi><mn>1</mn></msub></msubsup><mi>f</mi><mo stretchy="false">(</mo><msub><mi>x</mi><mn>1</mn></msub><mo>,</mo><mo>&#x2026;</mo><mo>,</mo><msub><mi>x</mi><mi>n</mi></msub><mo stretchy="false">)</mo><mi>d</mi><msub><mi>x</mi><mn>1</mn></msub><mo>&#x22EF;</mo><mi>d</mi><msub><mi>x</mi><mi>n</mi></msub>
+            </math>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 55. 3강 3.1 적률생성함수 -->
+    <div class="slide">
+      <div class="slide-header">
+        <div class="header-left">
+          <div class="slide-category">2강 통계학과 확률</div>
+          <div class="slide-title">5.1 적률생성함수 (MGF)</div>
+        </div>
+        <div class="slide-tag">5. 적률생성함수</div>
+      </div>
+      <div class="slide-body">
+        <div class="card">
+          <div class="card-title">정의</div>
+          <p>적률생성함수 : 모집단의 적률을 생성하는 함수</p>
+          <div class="math-card">
+            <math>
+              <mi>M</mi><mo stretchy="false">(</mo><mi>t</mi><mo stretchy="false">)</mo><mo>=</mo><mi>E</mi><mo stretchy="false">(</mo><msup><mi>e</mi><mrow><mi>t</mi><mi>X</mi></mrow></msup><mo stretchy="false">)</mo><mo>=</mo>
+              <mrow>
+                <mo>{</mo>
+                <mtable columnalign="left left">
+                  <mtr>
+                    <mtd><munderover><mo>&#x2211;</mo><mrow><mi>x</mi><mo>=</mo><mn>0</mn></mrow><mi>&#x221E;</mi></munderover><msup><mi>e</mi><mrow><mi>t</mi><mi>x</mi></mrow></msup><mi>f</mi><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo><mo>,</mo></mtd>
+                    <mtd><mtext>이산형</mtext></mtd>
+                  </mtr>
+                  <mtr>
+                    <mtd><msubsup><mo>&#x222B;</mo><mrow><mo>&#x2212;</mo><mi>&#x221E;</mi></mrow><mi>&#x221E;</mi></msubsup><msup><mi>e</mi><mrow><mi>t</mi><mi>x</mi></mrow></msup><mi>f</mi><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo><mi>d</mi><mi>x</mi><mo>,</mo></mtd>
+                    <mtd><mtext>연속형</mtext></mtd>
+                  </mtr>
+                </mtable>
+              </mrow>
+            </math>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 56. 3강 3.1 적률 도출 -->
+    <div class="slide">
+      <div class="slide-header">
+        <div class="header-left">
+          <div class="slide-category">2강 통계학과 확률</div>
+          <div class="slide-title">5.1 적률생성함수와 적률</div>
+        </div>
+        <div class="slide-tag">5. 적률생성함수</div>
+      </div>
+      <div class="slide-body">
+        <div class="card">
+          <div class="card-title">미분을 통한 적률 계산</div>
+          <div class="math-card">
+            <math>
+              <mi>E</mi><mo stretchy="false">(</mo><msup><mi>X</mi><mi>k</mi></msup><mo stretchy="false">)</mo><mo>=</mo><msub><mrow><mfrac><msup><mi>d</mi><mi>k</mi></msup><mrow><mi>d</mi><msup><mi>t</mi><mi>k</mi></msup></mrow></mfrac><mi>M</mi><mo stretchy="false">(</mo><mi>t</mi><mo stretchy="false">)</mo><mo>|</mo></mrow><mrow><mi>t</mi><mo>=</mo><mn>0</mn></mrow></msub>
+            </math>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 57. 3강 3.3 유일성 및 독립합의 MGF -->
+    <div class="slide">
+      <div class="slide-header">
+        <div class="header-left">
+          <div class="slide-category">2강 통계학과 확률</div>
+          <div class="slide-title">5.3 적률생성함수의 주요 성질</div>
+        </div>
+        <div class="slide-tag">5. 적률생성함수</div>
+      </div>
+      <div class="slide-body">
+        <div class="card">
+          <div class="card-title">유일성</div>
+          <div class="math-card">
+            <math>
+              <mi>t</mi><mtext>가&#160;</mtext><mn>0</mn><mtext>&#160;부분에서&#160;</mtext><msub><mi>M</mi><mi>X</mi></msub><mo stretchy="false">(</mo><mi>t</mi><mo stretchy="false">)</mo><mo>=</mo><msub><mi>M</mi><mi>Y</mi></msub><mo stretchy="false">(</mo><mi>t</mi><mo stretchy="false">)</mo>
+              <mspace width="1.5em"/><mo>&#x21D4;</mo><mspace width="1.5em"/>
+              <msub><mi>f</mi><mi>X</mi></msub><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo><mo>=</mo><msub><mi>f</mi><mi>Y</mi></msub><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo>
+            </math>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">독립인 변수 합의 MGF</div>
+          <div class="math-card">
+            <math>
+              <mi>X</mi><mo>,</mo><mi>Y</mi><mtext>가 독립이면&#160;</mtext>
+              <msub><mi>M</mi><mrow><mi>X</mi><mo>+</mo><mi>Y</mi></mrow></msub><mo stretchy="false">(</mo><mi>t</mi><mo stretchy="false">)</mo><mo>=</mo><msub><mi>M</mi><mi>X</mi></msub><mo stretchy="false">(</mo><mi>t</mi><mo stretchy="false">)</mo><msub><mi>M</mi><mi>Y</mi></msub><mo stretchy="false">(</mo><mi>t</mi><mo stretchy="false">)</mo>
+            </math>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 58. 3강 5.3 이항분포/정규분포 MGF -->
+    <div class="slide">
+      <div class="slide-header">
+        <div class="header-left">
+          <div class="slide-category">2강 통계학과 확률</div>
+          <div class="slide-title">5.3 적률생성함수</div>
+        </div>
+        <div class="slide-tag">5. 적률생성함수</div>
+      </div>
+      <div class="slide-body">
+        <div class="card">
+          <div class="card-title">이항분포 B(n, p)</div>
+          <div class="math-card">
+           <math display="block">
+            <mi>M</mi><mo stretchy="false">(</mo><mi>t</mi><mo stretchy="false">)</mo>
+            <mo>=</mo>
+            <mi>E</mi><mo stretchy="false">(</mo><msup><mi>e</mi><mrow><mi>t</mi><mi>X</mi></mrow></msup><mo stretchy="false">)</mo>
+            <mo>=</mo><msup><mrow><mo stretchy="false">(</mo><mn>1</mn><mo>&#x2212;</mo><mi>p</mi><mo>+</mo><mi>p</mi><msup><mi>e</mi><mi>t</mi></msup><mo stretchy="false">)</mo></mrow><mi>n</mi></msup>
+          </math>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">정규분포 N(μ, σ²)</div>
+          <div class="math-card">
+            <math display="block">
+              <mi>M</mi><mo stretchy="false">(</mo><mi>t</mi><mo stretchy="false">)</mo>
+              <mo>=</mo>
+              <mi>E</mi><mo stretchy="false">(</mo><msup><mi>e</mi><mrow><mi>t</mi><mi>X</mi></mrow></msup><mo stretchy="false">)</mo>
+              <mo>=</mo>
+              <mi>exp</mi><mo stretchy="true">(</mo>
+              <mi>μ</mi><mi>t</mi>
+              <mo>+</mo>
+              <mfrac><mn>1</mn><mn>2</mn></mfrac><msup><mi>σ</mi><mn>2</mn></msup><msup><mi>t</mi><mn>2</mn></msup>
+              <mo stretchy="true">)</mo>
+            </math>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 59. 3강 1.1 모집단의 확률분포 -->
+    <div class="slide">
+      <div class="slide-header">
+        <div class="header-left">
+          <div class="slide-category">3강 모집단의 분포</div>
+          <div class="slide-title">1.1 모집단의 확률분포</div>
+        </div>
+        <div class="slide-tag">1. 모집단의 확률분포</div>
+      </div>
+      <div class="slide-body">
+        <div class="card">
+          <div class="card-title">이산형 확률변수 : 확률질량함수</div>
+          <p><math><mi>f</mi><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo><mo>=</mo><mi>P</mi><mo stretchy="false">(</mo><mi>X</mi><mo>=</mo><mi>x</mi><mo stretchy="false">)</mo><mo>,</mo><mspace width="1em"/><mi>x</mi><mo>=</mo><mn>0</mn><mo>,</mo><mn>1</mn><mo>,</mo><mo>&#x2026;</mo></math></p>
+          <ul class="stylish-list">
+            <li>베르누이분포, 이항분포, 포아송분포, 기하분포, 초기하분포, 음이항분포</li>
+          </ul>
+        </div>
+        <div class="card">
+          <div class="card-title">연속형 확률변수 : 확률밀도함수</div>
+          <p><math><mi>F</mi><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo><mo>=</mo><mi>P</mi><mo stretchy="false">(</mo><mi>X</mi><mo>&#x2264;</mo><mi>x</mi><mo stretchy="false">)</mo><mo>=</mo><msubsup><mo>&#x222B;</mo><mrow><mo>&#x2212;</mo><mi>&#x221E;</mi></mrow><mi>x</mi></msubsup><mi>f</mi><mo stretchy="false">(</mo><mi>t</mi><mo stretchy="false">)</mo><mi>d</mi><mi>t</mi><mo>,</mo><mspace width="1.5em"/><mi>f</mi><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo><mo>=</mo><mfrac><mi>d</mi><mrow><mi>d</mi><mi>x</mi></mrow></mfrac><mi>F</mi><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo></math></p>
+          <ul class="stylish-list">
+            <li>연속형 균등분포, 지수분포, 감마분포, 정규분포, 베타분포, 로그정규분포</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- 60. 4강 2.1 베르누이분포 -->
+    <div class="slide">
+      <div class="slide-header">
+        <div class="header-left">
+          <div class="slide-category">3강 모집단의 분포</div>
+          <div class="slide-title">2.1 베르누이분포</div>
+        </div>
+        <div class="slide-tag">2. 이산형 확률분포</div>
+      </div>
+      <div class="slide-body">
+        <div class="card">
+          <div class="card-title">베르누이 시행과 분포</div>
+          <ul class="stylish-list">
+            <li><strong>베르누이 시행 :</strong> 시행 결과 두 가지 중 하나 (불량품 여부, 찬성 여부, 동전 앞면 여부)</li>
+            <li><strong>확률질량함수 :</strong> <math><mi>X</mi><mo>~</mo><mi>B</mi><mi>e</mi><mi>r</mi><mo stretchy="false">(</mo><mi>p</mi><mo stretchy="false">)</mo></math></li>
+          </ul>
+          <div class="math-card">
+            <math>
+              <mi>f</mi><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo><mo>=</mo><mi>P</mi><mo stretchy="false">(</mo><mi>X</mi><mo>=</mo><mi>x</mi><mo stretchy="false">)</mo><mo>=</mo><msup><mi>p</mi><mi>x</mi></msup><mo stretchy="false">(</mo><mn>1</mn><mo>&#x2212;</mo><mi>p</mi><msup><mo stretchy="false">)</mo><mrow><mn>1</mn><mo>&#x2212;</mo><mi>x</mi></mrow></msup><mo>,</mo><mspace width="1.5em"/><mi>x</mi><mo>=</mo><mn>0</mn><mo>,</mo><mn>1</mn></math>
+            </math>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 61. 4강 2.2 이항분포 개요 -->
+    <div class="slide">
+      <div class="slide-header">
+        <div class="header-left">
+          <div class="slide-category">3강 모집단의 분포</div>
+          <div class="slide-title">2.2 이항분포</div>
+        </div>
+        <div class="slide-tag">2 이산형 확률분포</div>
+      </div>
+      <div class="slide-body">
+        <div class="card">
+          <div class="card-title">정의 및 예시</div>
+          <ul class="stylish-list">
+            <li><math><mi>n</mi></math>번 독립적으로 베르누이 시행을 반복했을 때 성공횟수 → 이항분포 <math><mi>X</mi><mo>~</mo><mi>B</mi><mo stretchy="false">(</mo><mi>n</mi><mo>,</mo><mi>p</mi><mo stretchy="false">)</mo></math></li>
+            <li>동전 <math><mi>n</mi></math>번 독립적으로 던졌을 때 앞면 총 수</li>
+          </ul>
+        </div>
+        <div class="card">
+          <div class="card-title">확률질량함수</div>
+          <div class="math-card">
+            <math>
+              <mi>f</mi><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo><mo>=</mo><mrow><mo>(</mo><mfrac linethickness="0"><mi>n</mi><mi>x</mi></mfrac><mo>)</mo></mrow><msup><mi>p</mi><mi>x</mi></msup><mo stretchy="false">(</mo><mn>1</mn><mo>&#x2212;</mo><mi>p</mi><msup><mo stretchy="false">)</mo><mrow><mi>n</mi><mo>&#x2212;</mo><mi>x</mi></mrow></msup><mo>,</mo><mspace width="1.5em"/><mi>x</mi><mo>=</mo><mn>0</mn><mo>,</mo><mn>1</mn><mo>,</mo><mo>&#x2026;</mo><mo>,</mo><mi>n</mi>
+            </math>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 62. 이항분포 그래프 -->
+    <div class="slide">
+      <div class="slide-header">
+        <div class="header-left">
+          <div class="slide-category">3강 모집단의 분포</div>
+          <div class="slide-title">2.2 이항분포</div>
+        </div>
+        <div class="slide-tag">2. 이산형 확률분포</div>
+      </div>
+      <div class="slide-body">
+        <div class="card">
+          <div class="card-title">확률질량함수</div>
+          <img src="img/binomial.png" alt="이항분포" style="width: 100%; max-width: 500px; height: auto;">
+        </div>
+      </div>
+    </div>
+
+    <!-- 63. 4강 2.3 포아송분포 -->
+    <div class="slide">
+      <div class="slide-header">
+        <div class="header-left">
+          <div class="slide-category">3강 모집단의 분포</div>
+          <div class="slide-title">2.3 포아송분포</div>
+        </div>
+        <div class="slide-tag">2. 이산형 확률분포</div>
+      </div>
+      <div class="slide-body">
+        <div class="card">
+          <div class="card-title">단위 영역당 사건 발생수</div>
+          <p>특정 기간(영역)에서 일어나는 사건 수의 분포: <math><mi>X</mi><mo>~</mo><mi>P</mi><mi>o</mi><mi>i</mi><mi>s</mi><mi>s</mi><mi>o</mi><mi>n</mi><mo stretchy="false">(</mo><mi>&#x3BB;</mi><mo stretchy="false">)</mo></math></p>
+          <div class="math-card">
+            <math>
+              <mi>f</mi><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo><mo>=</mo><mi>P</mi><mo stretchy="false">(</mo><mi>X</mi><mo>=</mo><mi>x</mi><mo stretchy="false">)</mo><mo>=</mo><mfrac><mrow><msup><mi>&#x3BB;</mi><mi>x</mi></msup><msup><mi>e</mi><mrow><mo>&#x2212;</mo><mi>&#x3BB;</mi></mrow></msup></mrow><mrow><mi>x</mi><mo>!</mo></mrow></mfrac><mo>,</mo><mspace width="1.5em"/><mi>x</mi><mo>=</mo><mn>0</mn><mo>,</mo><mn>1</mn><mo>,</mo><mo>&#x2026;</mo><mspace width="0.8em"/><mo stretchy="false">(</mo><mi>&#x3BB;</mi><mo>&gt;</mo><mn>0</mn><mo stretchy="false">)</mo>
+            </math>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 64. 포아송분포 그래프 -->
+    <div class="slide">
+      <div class="slide-header">
+        <div class="header-left">
+          <div class="slide-category">3강 모집단의 분포</div>
+          <div class="slide-title">2.3 포아송분포</div>
+        </div>
+        <div class="slide-tag">2. 이산형 확률분포</div>
+      </div>
+      <div class="slide-body">
+        <div class="card">
+          <div class="card-title">확률질량함수</div>
+          <img src="img/poisson.png" alt="포아송분포" style="width: 100%; max-width: 500px; height: auto;">
+        </div>
+      </div>
+    </div>
+
+    <!-- 65. 4강 1.2 지수분포 -->
+    <div class="slide">
+      <div class="slide-header">
+        <div class="header-left">
+          <div class="slide-category">3강 모집단의 분포</div>
+          <div class="slide-title">3.1 지수분포</div>
+        </div>
+        <div class="slide-tag">3. 연속형 확률분포</div>
+      </div>
+      <div class="slide-body">
+        <div class="card">
+          <div class="card-title">첫 번째 사건 발생 대기시간</div>
+          <p>사건이 첫 번째로 발생할 때까지 소요되는 대기시간 <math><mi>T</mi></math>의 분포: <math><mi>T</mi><mo>~</mo><mi>E</mi><mi>x</mi><mi>p</mi><mo stretchy="false">(</mo><mi>&#x3BB;</mi><mo stretchy="false">)</mo></math></p>
+          <div class="math-card">
+            <math>
+              <mi>f</mi><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo><mo>=</mo><mi>&#x3BB;</mi><msup><mi>e</mi><mrow><mo>&#x2212;</mo><mi>&#x3BB;</mi><mi>x</mi></mrow></msup><mo>,</mo><mspace width="1.5em"/><mi>x</mi><mo>&gt;</mo><mn>0</mn><mo>,</mo><mspace width="0.8em"/><mi>&#x3BB;</mi><mo>&gt;</mo><mn>0</mn>
+            </math>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 66. 지수분포 그래프 -->
+    <div class="slide">
+      <div class="slide-header">
+        <div class="header-left">
+          <div class="slide-category">3강 모집단의 분포</div>
+          <div class="slide-title">3.1 지수분포</div>
+        </div>
+        <div class="slide-tag">3. 연속형 확률분포</div>
+      </div>
+      <div class="slide-body">
+        <div class="card">
+          <div class="card-title">확률밀도함수</div>
+          <img src="img/exponential.png" alt="지수분포" style="width: 100%; max-width: 500px; height: auto;">
+        </div>
+      </div>
+    </div>
+
+    <!-- 67. 4강 1.3 감마분포 -->
+    <div class="slide">
+      <div class="slide-header">
+        <div class="header-left">
+          <div class="slide-category">3강 모집단의 분포</div>
+          <div class="slide-title">3.2 감마분포</div>
+        </div>
+        <div class="slide-tag">3. 연속형 확률분포</div>
+      </div>
+      <div class="slide-body">
+        <div class="card">
+          <div class="card-title">r번째 사건 발생 대기시간</div>
+          <p>사건이 <math><mi>r</mi></math>번째 발생할 때까지 대기시간 <math><mi>T</mi></math>의 분포: <math><mi>T</mi><mo>~</mo><mi>G</mi><mi>a</mi><mi>m</mi><mi>m</mi><mi>a</mi><mo stretchy="false">(</mo><mi>r</mi><mo>,</mo><mi>&#x3BB;</mi><mo stretchy="false">)</mo></math></p>
+          <div class="math-card">
+            <math>
+              <mi>f</mi><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo><mo>=</mo><mfrac><msup><mi>&#x3BB;</mi><mi>r</mi></msup><mrow><mo stretchy="false">(</mo><mi>r</mi><mo>&#x2212;</mo><mn>1</mn><mo stretchy="false">)</mo><mo>!</mo></mrow></mfrac><msup><mi>x</mi><mrow><mi>r</mi><mo>&#x2212;</mo><mn>1</mn></mrow></msup><msup><mi>e</mi><mrow><mo>&#x2212;</mo><mi>&#x3BB;</mi><mi>x</mi></mrow></msup><mo>,</mo><mspace width="1.5em"/><mi>x</mi><mo>&#x2265;</mo><mn>0</mn><mo>,</mo><mspace width="0.8em"/><mi>&#x3BB;</mi><mo>&gt;</mo><mn>0</mn>
+            </math>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 68. 감마분포 그래프 -->
+    <div class="slide">
+      <div class="slide-header">
+        <div class="header-left">
+          <div class="slide-category">3강 모집단의 분포</div>
+          <div class="slide-title">3.2 감마분포</div>
+        </div>
+        <div class="slide-tag">3. 연속형 확률분포</div>
+      </div>
+      <div class="slide-body">
+        <div class="card">
+          <div class="card-title">확률밀도함수</div>
+          <div style="display: flex; justify-content: center; align-items: center; gap: 20px;">
+            <img src="img/gamma_1.png" alt="감마분포 1" style="width: 45%; max-width: 400px; height: auto;">
+            <img src="img/gamma_2.png" alt="감마분포 2" style="width: 45%; max-width: 400px; height: auto;">
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- 69. 4강 4.1 카이제곱분포 -->
+    <div class="slide">
+      <div class="slide-header">
+        <div class="header-left">
+          <div class="slide-category">3강 모집단의 분포</div>
+          <div class="slide-title">3.3 카이제곱(χ²)분포</div>
+        </div>
+        <div class="slide-tag">3. 연속형 확률분포</div>
+      </div>
+      <div class="slide-body">
+        <div class="card">
+          <div class="card-title">자유도 n인 카이제곱분포</div>
+          <p><math><mi>X</mi><mo>~</mo><msup><mi>&#x3C7;</mi><mn>2</mn></msup><mo stretchy="false">(</mo><mi>n</mi><mo stretchy="false">)</mo></math> : <math><mi>r</mi><mo>=</mo><mfrac><mi>n</mi><mn>2</mn></mfrac><mo>,</mo><mspace width="0.5em"/><mi>&#x3BB;</mi><mo>=</mo><mfrac><mn>1</mn><mn>2</mn></mfrac></math> 인 감마분포</p>
+          <div class="math-card">
+            <math>
+              <mi>f</mi><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo><mo>=</mo><mfrac><mn>1</mn><mrow><mi>&#x393;</mi><mo stretchy="false">(</mo><mfrac><mi>n</mi><mn>2</mn></mfrac><mo stretchy="false">)</mo></mrow></mfrac><msup><mrow><mo stretchy="false">(</mo><mfrac><mn>1</mn><mn>2</mn></mfrac><mo stretchy="false">)</mo></mrow><mfrac><mi>n</mi><mn>2</mn></mfrac></msup><msup><mi>x</mi><mrow><mfrac><mi>n</mi><mn>2</mn></mfrac><mo>&#x2212;</mo><mn>1</mn></mrow></msup><msup><mi>e</mi><mrow><mo>&#x2212;</mo><mfrac><mn>1</mn><mn>2</mn></mfrac><mi>x</mi></mrow></msup><mo>,</mo><mspace width="1.5em"/><mi>x</mi><mo>&gt;</mo><mn>0</mn>
+            </math>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 70. 카이제곱분포 그래프 -->
+    <div class="slide">
+      <div class="slide-header">
+        <div class="header-left">
+          <div class="slide-category">3강 모집단의 분포</div>
+          <div class="slide-title">3.3 카이제곱분포</div>
+        </div>
+        <div class="slide-tag">3. 연속형 확률분포</div>
+      </div>
+      <div class="slide-body">
+        <div class="card">
+          <div class="card-title">확률밀도함수</div>
+          <img src="img/chi_square.png" alt="카이제곱분포" style="width: 100%; max-width: 500px; height: auto;">
+        </div>
+      </div>
+    </div>
+
+    <!-- 71. 4강 1.4 정규분포 -->
+    <div class="slide">
+      <div class="slide-header">
+        <div class="header-left">
+          <div class="slide-category">3강 모집단의 분포</div>
+          <div class="slide-title">3.4 정규분포</div>
+        </div>
+        <div class="slide-tag">3. 연속형 확률분포</div>
+      </div>
+      <div class="slide-body">
+        <div class="card">
+          <div class="card-title">평균과 분산에 따른 정규분포</div>
+          <p>평균 <math><mi>&#x3BC;</mi></math>와 분산 <math><msup><mi>&#x3C3;</mi><mn>2</mn></msup></math>으로 결정: <math><mi>X</mi><mo>~</mo><mi>N</mi><mo stretchy="false">(</mo><mi>&#x3BC;</mi><mo>,</mo><msup><mi>&#x3C3;</mi><mn>2</mn></msup><mo stretchy="false">)</mo></math></p>
+          <div class="math-card">
+            <math>
+              <mi>f</mi><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo><mo>=</mo><mfrac><mn>1</mn><mrow><msqrt><mrow><mn>2</mn><mi>&#x3C0;</mi></mrow></msqrt><mi>&#x3C3;</mi></mrow></mfrac><mi>exp</mi><mo stretchy="true">(</mo><mo>&#x2212;</mo><mfrac><mrow><mo stretchy="false">(</mo><mi>x</mi><mo>&#x2212;</mo><mi>&#x3BC;</mi><msup><mo stretchy="false">)</mo><mn>2</mn></msup></mrow><mrow><mn>2</mn><msup><mi>&#x3C3;</mi><mn>2</mn></msup></mrow></mfrac><mo stretchy="true">)</mo><mo>,</mo><mspace width="1.5em"/><mo>&#x2212;</mo><mi>&#x221E;</mi><mo>&lt;</mo><mi>x</mi><mo>&lt;</mo><mi>&#x221E;</mi>
+            </math>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 72. 정규분포 그래프 -->
+    <div class="slide">
+      <div class="slide-header">
+        <div class="header-left">
+          <div class="slide-category">3강 모집단의 분포</div>
+          <div class="slide-title">3.4 정규분포</div>
+        </div>
+        <div class="slide-tag">3. 연속형 확률분포</div>
+      </div>
+      <div class="slide-body">
+        <div class="card">
+          <div class="card-title">확률밀도함수</div>
+          <img src="img/normal.png" alt="정규분포" style="width: 100%; max-width: 500px; height: auto;">
+        </div>
+      </div>
+    </div>
+
+    <!-- 73. 4강 1.4 표준정규분포 -->
+    <div class="slide">
+      <div class="slide-header">
+        <div class="header-left">
+          <div class="slide-category">3강 모집단의 분포</div>
+          <div class="slide-title">3.4 정규분포</div>
+        </div>
+        <div class="slide-tag">1 연속형 확률분포</div>
+      </div>
+      <div class="slide-body">
+        <div class="card">
+          <div class="card-title">표준정규분포</div>
+          <p><math><mi>Z</mi><mo>~</mo><mi>N</mi><mo stretchy="false">(</mo><mn>0</mn><mo>,</mo><mn>1</mn><mo stretchy="false">)</mo><mo>,</mo><mspace width="1em"/><mi>Z</mi><mo>=</mo><mfrac><mrow><mi>X</mi><mo>&#x2212;</mo><mi>&#x3BC;</mi></mrow><mi>&#x3C3;</mi></mfrac></math></p>
+          <div class="math-card">
+            <math>
+              <mi>f</mi><mo stretchy="false">(</mo><mi>z</mi><mo stretchy="false">)</mo><mo>=</mo><mfrac><mn>1</mn><msqrt><mrow><mn>2</mn><mi>&#x3C0;</mi></mrow></msqrt></mfrac><mi>exp</mi><mo stretchy="true">(</mo><mo>&#x2212;</mo><mfrac><msup><mi>z</mi><mn>2</mn></msup><mn>2</mn></mfrac><mo stretchy="true">)</mo><mo>,</mo><mspace width="1.5em"/><mo>&#x2212;</mo><mi>&#x221E;</mi><mo>&lt;</mo><mi>z</mi><mo>&lt;</mo><mi>&#x221E;</mi>
+            </math>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 74. 6강 1.2 통계추론 통계량의 예 -->
+    <div class="slide">
+      <div class="slide-header">
+        <div class="header-left">
+          <div class="slide-category">4강 표본분포</div>
+          <div class="slide-title">1.1 표본분포와 통계량</div>
+        </div>
+        <div class="slide-tag">1. 표본분포의 정의</div>
+      </div>
+      <div class="slide-body">
+        <div class="card">
+          <div class="card-title">주요 통계량</div>
+          <div class="math-card" style="flex-direction: column; gap: 14px; align-items: flex-start; padding-left: 36px;">
+            <math>
+              <mtext>표본평균 :&#160;</mtext><mover><mi>X</mi><mo accent="true">&#xAF;</mo></mover><mo>=</mo><mfrac><mn>1</mn><mi>n</mi></mfrac><munderover><mo>&#x2211;</mo><mrow><mi>i</mi><mo>=</mo><mn>1</mn></mrow><mi>n</mi></munderover><msub><mi>X</mi><mi>i</mi></msub>
+            </math>
+            <math>
+              <mtext>표본분산 :&#160;</mtext><msup><mi>S</mi><mn>2</mn></msup><mo>=</mo><mfrac><mn>1</mn><mrow><mi>n</mi><mo>&#x2212;</mo><mn>1</mn></mrow></mfrac><munderover><mo>&#x2211;</mo><mrow><mi>i</mi><mo>=</mo><mn>1</mn></mrow><mi>n</mi></munderover><mo stretchy="false">(</mo><msub><mi>X</mi><mi>i</mi></msub><mo>&#x2212;</mo><mover><mi>X</mi><mo accent="true">&#xAF;</mo></mover><msup><mo stretchy="false">)</mo><mn>2</mn></msup>
+            </math>
+            <math>
+              <mtext>표본표준편차 :&#160;</mtext><mi>S</mi><mo>=</mo><msqrt><mrow><mfrac><mn>1</mn><mrow><mi>n</mi><mo>&#x2212;</mo><mn>1</mn></mrow></mfrac><munderover><mo>&#x2211;</mo><mrow><mi>i</mi><mo>=</mo><mn>1</mn></mrow><mi>n</mi></munderover><mo stretchy="false">(</mo><msub><mi>X</mi><mi>i</mi></msub><mo>&#x2212;</mo><mover><mi>X</mi><mo accent="true">&#xAF;</mo></mover><msup><mo stretchy="false">)</mo><mn>2</mn></msup></mrow></msqrt>
+            </math>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 75. 6강 3.1 적률생성함수의 성질 합과 평균 -->
+    <div class="slide">
+      <div class="slide-header">
+        <div class="header-left">
+          <div class="slide-category">4강 표본분포</div>
+          <div class="slide-title">1.2 독립표본의 적률생성함수</div>
+        </div>
+        <div class="slide-tag">1. 표본분포의 정의</div>
+      </div>
+      <div class="slide-body">
+        <div class="card">
+          <div class="card-title">독립변수들의 합의 적률생성함수</div>
+          <div class="math-card">
+            <math>
+              <msub><mi>M</mi><mrow><msub><mi>X</mi><mn>1</mn></msub><mo>+</mo><mo>&#x2026;</mo><mo>+</mo><msub><mi>X</mi><mi>n</mi></msub></mrow></msub><mo stretchy="false">(</mo><mi>t</mi><mo stretchy="false">)</mo><mo>=</mo><munderover><mo>&#x220F;</mo><mrow><mi>i</mi><mo>=</mo><mn>1</mn></mrow><mi>n</mi></munderover><msub><mi>M</mi><msub><mi>X</mi><mi>i</mi></msub></msub><mo stretchy="false">(</mo><mi>t</mi><mo stretchy="false">)</mo>
+            </math>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">동일분포 독립표본 (i.i.d.)</div>
+          <div class="math-card">
+            <math>
+              <msub><mi>M</mi><mrow><msub><mi>X</mi><mn>1</mn></msub><mo>+</mo><mo>&#x2026;</mo><mo>+</mo><msub><mi>X</mi><mi>n</mi></msub></mrow></msub><mo stretchy="false">(</mo><mi>t</mi><mo stretchy="false">)</mo><mo>=</mo><mo stretchy="false">[</mo><msub><mi>M</mi><mi>X</mi></msub><mo stretchy="false">(</mo><mi>t</mi><mo stretchy="false">)</mo><msup><mo stretchy="false">]</mo><mi>n</mi></msup>
+              <mspace width="2em"/>
+              <msub><mi>M</mi><mover><mi>X</mi><mo accent="true">&#xAF;</mo></mover></msub><mo stretchy="false">(</mo><mi>t</mi><mo stretchy="false">)</mo><mo>=</mo><msup><mrow><mo stretchy="false">[</mo><msub><mi>M</mi><mi>X</mi></msub><mo stretchy="false">(</mo><mfrac><mi>t</mi><mi>n</mi></mfrac><mo stretchy="false">)</mo><mo stretchy="false">]</mo></mrow><mi>n</mi></msup>
+            </math>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 76. 6강 3.2 이항분포 합의 분포 -->
+    <div class="slide">
+      <div class="slide-header">
+        <div class="header-left">
+          <div class="slide-category">4강 표본분포</div>
+          <div class="slide-title">1.3 합의 분포</div>
+        </div>
+        <div class="slide-tag">1. 표본분포의 정의</div>
+      </div>
+      <div class="slide-body">
+        <div class="card">
+          <div class="card-title">이항분포 확률변수 합의 분포</div>
+          <p>
+            <math><msub><mi>X</mi><mn>1</mn></msub><mo>~</mo><mi>B</mi><mo stretchy="false">(</mo><msub><mi>n</mi><mn>1</mn></msub><mo>,</mo><mi>p</mi><mo stretchy="false">)</mo></math>와 
+            <math><msub><mi>X</mi><mn>2</mn></msub><mo>~</mo><mi>B</mi><mo stretchy="false">(</mo><msub><mi>n</mi><mn>2</mn></msub><mo>,</mo><mi>p</mi><mo stretchy="false">)</mo></math>가 서로 독립일 때:
+          </p>
+          <div class="math-card">
+            <math display="block">
+              <msub><mi>X</mi><mn>1</mn></msub><mo>+</mo><msub><mi>X</mi><mn>2</mn></msub><mo>~</mo><mi>B</mi><mo stretchy="false">(</mo><msub><mi>n</mi><mn>1</mn></msub><mo>+</mo><msub><mi>n</mi><mn>2</mn></msub><mo>,</mo><mi>p</mi><mo stretchy="false">)</mo>
+            </math>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 77. 6강 3.2 주요 합의 분포 정리 -->
+    <div class="slide">
+      <div class="slide-header">
+        <div class="header-left">
+          <div class="slide-category">4강 표본분포</div>
+          <div class="slide-title">1.3 합의 분포</div>
+        </div>
+        <div class="slide-tag">1. 표본분포의 정의</div>
+      </div>
+      <div class="slide-body">
+        <div class="card">
+          <div class="card-title">주요 합의 분포</div>
+          <ul class="stylish-list">
+            <li><math><msub><mi>X</mi><mi>i</mi></msub><mo>~</mo><mi>B</mi><mo stretchy="false">(</mo><msub><mi>n</mi><mi>i</mi></msub><mo>,</mo><mi>p</mi><mo stretchy="false">)</mo><mo>&#x21D2;</mo><mo>&#x2211;</mo><msub><mi>X</mi><mi>i</mi></msub><mo>~</mo><mi>B</mi><mo stretchy="false">(</mo><mo>&#x2211;</mo><msub><mi>n</mi><mi>i</mi></msub><mo>,</mo><mi>p</mi><mo stretchy="false">)</mo></math></li>
+            <li><math><msub><mi>X</mi><mi>i</mi></msub><mo>~</mo><mi>P</mi><mi>o</mi><mi>i</mi><mi>s</mi><mi>s</mi><mi>o</mi><mi>n</mi><mo stretchy="false">(</mo><msub><mi>&#x3BB;</mi><mi>i</mi></msub><mo stretchy="false">)</mo><mo>&#x21D2;</mo><mo>&#x2211;</mo><msub><mi>X</mi><mi>i</mi></msub><mo>~</mo><mi>P</mi><mi>o</mi><mi>i</mi><mi>s</mi><mi>s</mi><mi>o</mi><mi>n</mi><mo stretchy="false">(</mo><mo>&#x2211;</mo><msub><mi>&#x3BB;</mi><mi>i</mi></msub><mo stretchy="false">)</mo></math></li>
+            <li><math><msub><mi>X</mi><mi>i</mi></msub><mo>~</mo><mi>G</mi><mi>a</mi><mi>m</mi><mi>m</mi><mi>a</mi><mo stretchy="false">(</mo><msub><mi>r</mi><mi>i</mi></msub><mo>,</mo><mi>&#x3BB;</mi><mo stretchy="false">)</mo><mo>&#x21D2;</mo><mo>&#x2211;</mo><msub><mi>X</mi><mi>i</mi></msub><mo>~</mo><mi>G</mi><mi>a</mi><mi>m</mi><mi>m</mi><mi>a</mi><mo stretchy="false">(</mo><mo>&#x2211;</mo><msub><mi>r</mi><mi>i</mi></msub><mo>,</mo><mi>&#x3BB;</mi><mo stretchy="false">)</mo></math></li>
+            <li><math><msub><mi>X</mi><mi>i</mi></msub><mo>~</mo><mi>N</mi><mo stretchy="false">(</mo><msub><mi>&#x3BC;</mi><mi>i</mi></msub><mo>,</mo><msubsup><mi>&#x3C3;</mi><mi>i</mi><mn>2</mn></msubsup><mo stretchy="false">)</mo><mo>&#x21D2;</mo><mo>&#x2211;</mo><msub><mi>X</mi><mi>i</mi></msub><mo>~</mo><mi>N</mi><mo stretchy="false">(</mo><mo>&#x2211;</mo><msub><mi>&#x3BC;</mi><mi>i</mi></msub><mo>,</mo><mo>&#x2211;</mo><msubsup><mi>&#x3C3;</mi><mi>i</mi><mn>2</mn></msubsup><mo stretchy="false">)</mo></math></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- 78. 6강 4.1 카이제곱분포 표본분산 -->
+    <div class="slide">
+      <div class="slide-header">
+        <div class="header-left">
+          <div class="slide-category">4강 표본분포</div>
+          <div class="slide-title">2.1 표본분산의 분포</div>
+        </div>
+        <div class="slide-tag">2. 표본분포</div>
+      </div>
+      <div class="slide-body">
+        <div class="card">
+          <div class="card-title">정규모집단 표본분산의 분포</div>
+          <p><math><msub><mi>X</mi><mn>1</mn></msub><mo>,</mo><mo>&#x2026;</mo><mo>,</mo><msub><mi>X</mi><mi>n</mi></msub></math>이 서로 독립, <math><mi>N</mi><mo stretchy="false">(</mo><mi>&#x3BC;</mi><mo>,</mo><msup><mi>&#x3C3;</mi><mn>2</mn></msup><mo stretchy="false">)</mo></math>:</p>
+          <div class="math-card">
+            <math>
+              <mfrac><mrow><msub><mi>X</mi><mi>i</mi></msub><mo>&#x2212;</mo><mi>&#x3BC;</mi></mrow><mi>&#x3C3;</mi></mfrac><mo>~</mo><mi>N</mi><mo stretchy="false">(</mo><mn>0</mn><mo>,</mo><mn>1</mn><mo stretchy="false">)</mo>
+              <mspace width="2em"/>
+              <msup><mrow><mo stretchy="true">(</mo><mfrac><mrow><msub><mi>X</mi><mi>i</mi></msub><mo>&#x2212;</mo><mi>&#x3BC;</mi></mrow><mi>&#x3C3;</mi></mfrac><mo stretchy="true">)</mo></mrow><mn>2</mn></msup><mo>~</mo><msup><mi>&#x3C7;</mi><mn>2</mn></msup><mo stretchy="false">(</mo><mn>1</mn><mo stretchy="false">)</mo>
+            </math>
+          </div>
+          <div class="math-card">
+            <math>
+              <mfrac><mrow><mo stretchy="false">(</mo><mi>n</mi><mo>&#x2212;</mo><mn>1</mn><mo stretchy="false">)</mo><msup><mi>S</mi><mn>2</mn></msup></mrow><msup><mi>&#x3C3;</mi><mn>2</mn></msup></mfrac><mo>~</mo><msup><mi>&#x3C7;</mi><mn>2</mn></msup><mo stretchy="false">(</mo><mi>n</mi><mo>&#x2212;</mo><mn>1</mn><mo stretchy="false">)</mo>
+            </math>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 79. 6강 5.1 표본평균의 분포 -->
+    <div class="slide">
+      <div class="slide-header">
+        <div class="header-left">
+          <div class="slide-category">4강 표본분포</div>
+          <div class="slide-title">2.2 표본평균의 분포</div>
+        </div>
+        <div class="slide-tag">2. 표본분포</div>
+      </div>
+      <div class="slide-body">
+        <div class="card">
+          <div class="card-title">모분산 알 때 분포 : 정규분포</div>
+          <div class="math-card">
+            <math>
+              <msub><mi>X</mi><mi>i</mi></msub><mtext>&#160;독립,&#160;</mtext><mi>N</mi><mo stretchy="false">(</mo><mi>&#x3BC;</mi><mo>,</mo><msup><mi>&#x3C3;</mi><mn>2</mn></msup><mo stretchy="false">)</mo><mo>:</mo>
+              <mspace width="1.5em"/>
+              <mfrac><mrow><mover><mi>X</mi><mo accent="true">&#xAF;</mo></mover><mo>&#x2212;</mo><mi>&#x3BC;</mi></mrow><mrow><mi>&#x3C3;</mi><mo>/</mo><msqrt><mi>n</mi></msqrt></mrow></mfrac><mo>~</mo><mi>N</mi><mo stretchy="false">(</mo><mn>0</mn><mo>,</mo><mn>1</mn><mo stretchy="false">)</mo>
+            </math>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">모분산 모를 때 분포 : t-분포</div>
+          <div class="math-card">
+            <math>
+              <mfrac><mrow><mover><mi>X</mi><mo accent="true">&#xAF;</mo></mover><mo>&#x2212;</mo><mi>&#x3BC;</mi></mrow><mrow><mi>S</mi><mo>/</mo><msqrt><mi>n</mi></msqrt></mrow></mfrac><mo>~</mo><mi>t</mi><mo stretchy="false">(</mo><mi>n</mi><mo>&#x2212;</mo><mn>1</mn><mo stretchy="false">)</mo>
+            </math>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 80. 6강 5.2 t분포 유도 및 PDF -->
+    <div class="slide">
+      <div class="slide-header">
+        <div class="header-left">
+          <div class="slide-category">4강 표본분포</div>
+          <div class="slide-title">2.3 t 분포</div>
+        </div>
+        <div class="slide-tag">2. 표본분포</div>
+      </div>
+      <div class="slide-body">
+        <div class="card">
+          <div class="card-title">통계량 T</div>
+          <div class="math-card">
+            <math>
+              <mi>T</mi><mo>=</mo><mfrac><mrow><mover><mi>X</mi><mo accent="true">&#xAF;</mo></mover><mo>&#x2212;</mo><mi>&#x3BC;</mi></mrow><mrow><mi>S</mi><mo>/</mo><msqrt><mi>n</mi></msqrt></mrow></mfrac><mo>=</mo><mfrac><mrow><mo stretchy="false">(</mo><mover><mi>X</mi><mo accent="true">&#xAF;</mo></mover><mo>&#x2212;</mo><mi>&#x3BC;</mi><mo stretchy="false">)</mo><mo>/</mo><mo stretchy="false">(</mo><mi>&#x3C3;</mi><mo>/</mo><msqrt><mi>n</mi></msqrt><mo stretchy="false">)</mo></mrow><msqrt><mfrac><mrow><mo stretchy="false">(</mo><mi>n</mi><mo>&#x2212;</mo><mn>1</mn><mo stretchy="false">)</mo><msup><mi>S</mi><mn>2</mn></msup><mo>/</mo><msup><mi>&#x3C3;</mi><mn>2</mn></msup></mrow><mrow><mi>n</mi><mo>&#x2212;</mo><mn>1</mn></mrow></mfrac></msqrt></mfrac><mo>=</mo><mfrac><mi>Z</mi><msqrt><mrow><mi>V</mi><mo>/</mo><mo stretchy="false">(</mo><mi>n</mi><mo>&#x2212;</mo><mn>1</mn><mo stretchy="false">)</mo></mrow></msqrt></mfrac>
+            </math>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">자유도 n-1인 t분포의 확률밀도함수</div>
+          <div class="math-card">
+            <math>
+              <mi>f</mi><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo><mo>=</mo><mfrac><mrow><mi>&#x393;</mi><mo stretchy="false">(</mo><mfrac><mi>n</mi><mn>2</mn></mfrac><mo stretchy="false">)</mo></mrow><mrow><mi>&#x393;</mi><mo stretchy="false">(</mo><mfrac><mn>1</mn><mn>2</mn></mfrac><mo stretchy="false">)</mo><mi>&#x393;</mi><mo stretchy="false">(</mo><mfrac><mrow><mi>n</mi><mo>&#x2212;</mo><mn>1</mn></mrow><mn>2</mn></mfrac><mo stretchy="false">)</mo></mrow></mfrac><msup><mrow><mo stretchy="true">(</mo><mn>1</mn><mo>+</mo><mfrac><msup><mi>x</mi><mn>2</mn></msup><mrow><mi>n</mi><mo>&#x2212;</mo><mn>1</mn></mrow></mfrac><mo stretchy="true">)</mo></mrow><mrow><mo>&#x2212;</mo><mfrac><mi>n</mi><mn>2</mn></mfrac></mrow></msup><mfrac><mn>1</mn><msqrt><mrow><mi>n</mi><mo>&#x2212;</mo><mn>1</mn></mrow></msqrt></mfrac><mo>,</mo><mspace width="1.5em"/><mo>&#x2212;</mo><mi>&#x221E;</mi><mo>&lt;</mo><mi>x</mi><mo>&lt;</mo><mi>&#x221E;</mi>
+            </math>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 81. t 분포 그래프 -->
+    <div class="slide">
+      <div class="slide-header">
+        <div class="header-left">
+          <div class="slide-category">4강 표본분포</div>
+          <div class="slide-title">2.3 t 분포</div>
+        </div>
+        <div class="slide-tag">2. 표본분포</div>
+      </div>
+      <div class="slide-body">
+        <div class="card">
+          <div class="card-title">확률밀도함수</div>
+          <img src="img/t_dist.png" alt="t 분포" style="width: 100%; max-width: 500px; height: auto;">
+        </div>
+      </div>
+    </div>
+
+    <!-- 82. 7강 3.1 확률적 수렴 그래프 -->
+    <div class="slide">
+      <div class="slide-header">
+        <div class="header-left">
+          <div class="slide-category">4강 표본분포</div>
+          <div class="slide-title">3.1 확률적 수렴</div>
+        </div>
+        <div class="slide-tag">3. 극한분포</div>
+      </div>
+      <div class="slide-body">
+        <div class="card">
+          <div class="card-title">확률적 수렴</div>
+          <img src="img/lln.png" alt="확률적 수렴" style="width: 100%; max-width: 500px; height: auto;">
+        </div>
+      </div>
+    </div>
+
+    <!-- 83. 7강 3.1 표본평균 수렴 정의 -->
+    <div class="slide">
+      <div class="slide-header">
+        <div class="header-left">
+          <div class="slide-category">4강 표본분포</div>
+          <div class="slide-title">3.1 확률적 수렴</div>
+        </div>
+        <div class="slide-tag">3. 극한분포</div>
+      </div>
+      <div class="slide-body">
+        <div class="card">
+          <div class="card-title">표본평균의 모평균 접근</div>
+          <ul class="stylish-list">
+            <li>모집단 <math><mo>~</mo><mi>N</mi><mo stretchy="false">(</mo><mi>&#x3BC;</mi><mo>,</mo><msup><mi>&#x3C3;</mi><mn>2</mn></msup><mo stretchy="false">)</mo><mo>&#x2192;</mo></math> 표본평균 <math><mo>~</mo><mi>N</mi><mo stretchy="false">(</mo><mi>&#x3BC;</mi><mo>,</mo><mfrac><msup><mi>&#x3C3;</mi><mn>2</mn></msup><mi>n</mi></mfrac><mo stretchy="false">)</mo></math></li>
+            <li><math><mi>n</mi></math>이 무한히 커지면 표본평균은 <math><mi>&#x3BC;</mi></math>에 근접</li>
+          </ul>
+          <div class="math-card">
+            <math>
+              <mover><mi>X</mi><mo accent="true">&#xAF;</mo></mover><mover><mo>&#x2192;</mo><mi>p</mi></mover><mi>&#x3BC;</mi>
+              <mspace width="2em"/>
+              <mtext>임의 양수&#160;</mtext><mi>&#x3B5;</mi><mo>,</mo><mspace width="1em"/><munder><mi>lim</mi><mrow><mi>n</mi><mo>&#x2192;</mo><mi>&#x221E;</mi></mrow></munder><mi>P</mi><mo stretchy="false">(</mo><mo>&#x7C;</mo><mover><mi>X</mi><mo accent="true">&#xAF;</mo></mover><mo>&#x2212;</mo><mi>&#x3BC;</mi><mo>&#x7C;</mo><mo>&lt;</mo><mi>&#x3B5;</mi><mo stretchy="false">)</mo><mo>=</mo><mn>1</mn>
+            </math>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 84. 7강 3.3 약대수법칙 -->
+    <div class="slide">
+      <div class="slide-header">
+        <div class="header-left">
+          <div class="slide-category">4강 표본분포</div>
+          <div class="slide-title">3.2 약대수법칙</div>
+        </div>
+        <div class="slide-tag">3. 극한분포</div>
+      </div>
+      <div class="slide-body">
+        <div class="card">
+          <div class="card-title">약대수법칙의 정리</div>
+          <p><math><msub><mi>X</mi><mn>1</mn></msub><mo>,</mo><mo>&#x2026;</mo><mo>,</mo><msub><mi>X</mi><mi>n</mi></msub><mo>~</mo><mi>E</mi><mo stretchy="false">(</mo><msub><mi>X</mi><mi>i</mi></msub><mo stretchy="false">)</mo><mo>=</mo><mi>&#x3BC;</mi><mo>,</mo><mspace width="0.5em"/><mi>V</mi><mi>a</mi><mi>r</mi><mo stretchy="false">(</mo><msub><mi>X</mi><mi>i</mi></msub><mo stretchy="false">)</mo><mo>=</mo><msup><mi>&#x3C3;</mi><mn>2</mn></msup></math> 확률표본:</p>
+          <div class="math-card">
+            <math>
+              <msub><mover><mi>X</mi><mo accent="true">&#xAF;</mo></mover><mi>n</mi></msub><mtext>가&#160;</mtext><mi>&#x3BC;</mi><mtext>에 확률적으로 수렴&#160;</mtext><mo stretchy="false">(</mo><msub><mover><mi>X</mi><mo accent="true">&#xAF;</mo></mover><mi>n</mi></msub><mover><mo>&#x2192;</mo><mi>p</mi></mover><mi>&#x3BC;</mi><mo stretchy="false">)</mo>
+            </math>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 85. 7강 3.5 분포의 수렴 -->
+    <div class="slide">
+      <div class="slide-header">
+        <div class="header-left">
+          <div class="slide-category">4강 표본분포</div>
+          <div class="slide-title">3.3 분포의 수렴</div>
+        </div>
+        <div class="slide-tag">3. 극한분포</div>
+      </div>
+      <div class="slide-body">
+        <div class="card">
+          <div class="card-title">분포수렴 (Convergence in Distribution)</div>
+          <p><math><msub><mi>Y</mi><mi>n</mi></msub><mover><mo>&#x2192;</mo><mi>d</mi></mover><mi>Y</mi></math></p>
+          <p style="margin-top: 10px;">누적분포함수나 적률생성함수를 이용:</p>
+          <div class="math-card">
+            <math>
+              <munder><mi>lim</mi><mrow><mi>n</mi><mo>&#x2192;</mo><mi>&#x221E;</mi></mrow></munder><msub><mi>F</mi><mi>n</mi></msub><mo stretchy="false">(</mo><mi>y</mi><mo stretchy="false">)</mo><mo>=</mo><mi>F</mi><mo stretchy="false">(</mo><mi>y</mi><mo stretchy="false">)</mo>
+              <mspace width="2em"/><mtext>or</mtext><mspace width="2em"/>
+              <munder><mi>lim</mi><mrow><mi>n</mi><mo>&#x2192;</mo><mi>&#x221E;</mi></mrow></munder><msub><mi>M</mi><mi>n</mi></msub><mo stretchy="false">(</mo><mi>t</mi><mo stretchy="false">)</mo><mo>=</mo><mi>M</mi><mo stretchy="false">(</mo><mi>t</mi><mo stretchy="false">)</mo>
+            </math>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 86. 7강 3.7 중심극한정리 -->
+    <div class="slide">
+      <div class="slide-header">
+        <div class="header-left">
+          <div class="slide-category">4강 표본분포</div>
+          <div class="slide-title">3.4 중심극한정리</div>
+        </div>
+        <div class="slide-tag">3. 극한분포</div>
+      </div>
+      <div class="slide-body">
+        <div class="card">
+          <div class="card-title">표본평균의 정규분포 근사</div>
+          <p><math><msub><mi>X</mi><mn>1</mn></msub><mo>,</mo><mo>&#x2026;</mo><mo>,</mo><msub><mi>X</mi><mi>n</mi></msub><mo>~</mo><mi>E</mi><mo stretchy="false">(</mo><msub><mi>X</mi><mi>i</mi></msub><mo stretchy="false">)</mo><mo>=</mo><mi>&#x3BC;</mi><mo>,</mo><mspace width="0.5em"/><mi>V</mi><mi>a</mi><mi>r</mi><mo stretchy="false">(</mo><msub><mi>X</mi><mi>i</mi></msub><mo stretchy="false">)</mo><mo>=</mo><msup><mi>&#x3C3;</mi><mn>2</mn></msup></math> 확률표본:</p>
+          <div class="math-card">
+            <math>
+              <msub><mi>Y</mi><mi>n</mi></msub><mo>=</mo><mfrac><mrow><msqrt><mi>n</mi></msqrt><mo stretchy="false">(</mo><msub><mover><mi>X</mi><mo accent="true">&#xAF;</mo></mover><mi>n</mi></msub><mo>&#x2212;</mo><mi>&#x3BC;</mi><mo stretchy="false">)</mo></mrow><mi>&#x3C3;</mi></mfrac><mover><mo>&#x2192;</mo><mi>d</mi></mover><mi>N</mi><mo stretchy="false">(</mo><mn>0</mn><mo>,</mo><mn>1</mn><mo stretchy="false">)</mo>
+            </math>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 87. 중심극한정리 1 그래프 -->
+    <div class="slide">
+      <div class="slide-header">
+        <div class="header-left">
+          <div class="slide-category">4강 표본분포</div>
+          <div class="slide-title">3.4 중심극한정리</div>
+        </div>
+        <div class="slide-tag">3. 극한분포</div>
+      </div>
+      <div class="slide-body">
+        <div class="card">
+          <div class="card-title">중심극한정리 (1)</div>
+          <img src="img/clt_1.png" alt="중심극한정리1" style="width: 100%; max-width: 500px; height: auto;">
+        </div>
+      </div>
+    </div>
+
+    <!-- 88. 중심극한정리 2 그래프 -->
+    <div class="slide">
+      <div class="slide-header">
+        <div class="header-left">
+          <div class="slide-category">4강 표본분포</div>
+          <div class="slide-title">3.4 중심극한정리</div>
+        </div>
+        <div class="slide-tag">3. 극한분포</div>
+      </div>
+      <div class="slide-body">
+        <div class="card">
+          <div class="card-title">중심극한정리 (2)</div>
+          <img src="img/clt_2.png" alt="중심극한정리2" style="width: 100%; max-width: 500px; height: auto;">
+        </div>
+      </div>
+    </div>
+
+    <!-- 89. 7강 3.9 극한분포 연산 예제 -->
+    <div class="slide">
+      <div class="slide-header">
+        <div class="header-left">
+          <div class="slide-category">4강 표본분포</div>
+          <div class="slide-title">4.3 극한분포 : 예 4.21</div>
+        </div>
+        <div class="slide-tag">3. 극한분포</div>
+      </div>
+      <div class="slide-body">
+        <div class="card">
+          <div class="card-title">예 4.21</div>
+          <p><math><msub><mi>X</mi><mn>1</mn></msub><mo>,</mo><mo>&#x2026;</mo><mo>,</mo><msub><mi>X</mi><mi>n</mi></msub><mo>~</mo><mo stretchy="false">(</mo><mi>&#x3BC;</mi><mo>,</mo><msup><mi>&#x3C3;</mi><mn>2</mn></msup><mo stretchy="false">)</mo></math> 인 확률표본일 때,</p>
+          <div class="math-card">
+            <math>
+              <msub><mi>Y</mi><mi>n</mi></msub><mo>=</mo><mfrac><mrow><msub><mover><mi>X</mi><mo accent="true">&#xAF;</mo></mover><mi>n</mi></msub><mo>&#x2212;</mo><mi>&#x3BC;</mi></mrow><mrow><msub><mi>S</mi><mi>n</mi></msub><mo>/</mo><msqrt><mi>n</mi></msqrt></mrow></mfrac>
+            </math>
+          </div>
+          <p>의 극한분포를 구하라.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 90. 8강 4.1 최대가능도법 역사/예제 -->
+    <div class="slide">
+      <div class="slide-header">
+        <div class="header-left">
+          <div class="slide-category">5강 점추정</div>
+          <div class="slide-title">1.1 최대가능도추정법</div>
+        </div>
+        <div class="slide-tag">1. 최대가능도추정법</div>
+      </div>
+      <div class="slide-body">
+        <div class="card">
+          <div class="card-title">역사적 배경</div>
+          <ul class="stylish-list">
+            <li>1821년 독일 수학자 가우스에 의해 제안</li>
+            <li>1922년 피셔에 의해 재발견되어 발전</li>
+          </ul>
+        </div>
+        <div class="card">
+          <div class="card-title">예 5.6</div>
+          <p>상자 안에 빨간색과 파란색 공 3개, 빨간 공과 파란색 공은 적어도 1개 이상. 공을 1개씩 3번 복원추출해서 나타난 파란색 공의 개수로 상자 안 공의 구성을 추정하라.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 91. 8강 4.2 가능도함수 -->
+    <div class="slide">
+      <div class="slide-header">
+        <div class="header-left">
+          <div class="slide-category">5강 점추정</div>
+          <div class="slide-title">4.2 가능도함수</div>
+        </div>
+        <div class="slide-tag">1. 최대가능도추정법</div>
+      </div>
+      <div class="slide-body">
+        <div class="card">
+          <div class="card-title">가능도함수(Likelihood Function)의 정의</div>
+          <p><math><msub><mi>X</mi><mn>1</mn></msub><mo>,</mo><mo>&#x2026;</mo><mo>,</mo><msub><mi>X</mi><mi>n</mi></msub><mo>:</mo><mi>f</mi><mo stretchy="false">(</mo><mi>x</mi><mo>&#x7C;</mo><mi>&#x3B8;</mi><mo stretchy="false">)</mo></math>의 확률표본일 때:</p>
+          <div class="math-card">
+            <math>
+              <mi>L</mi><mo stretchy="false">(</mo><mi>&#x3B8;</mi><mo stretchy="false">)</mo><mo>=</mo><mi>L</mi><mo stretchy="false">(</mo><mi>&#x3B8;</mi><mo>&#x7C;</mo><msub><mi>x</mi><mn>1</mn></msub><mo>,</mo><mo>&#x2026;</mo><mo>,</mo><msub><mi>x</mi><mi>n</mi></msub><mo stretchy="false">)</mo><mo>=</mo><munderover><mo>&#x220F;</mo><mrow><mi>i</mi><mo>=</mo><mn>1</mn></mrow><mi>n</mi></munderover><mi>f</mi><mo stretchy="false">(</mo><msub><mi>x</mi><mi>i</mi></msub><mo>&#x7C;</mo><mi>&#x3B8;</mi><mo stretchy="false">)</mo>
+            </math>
+          </div>
+          <p style="margin-top: 10px; color: var(--text-muted);">가능도 함수에 확률표본에서 얻을 수 있는 모수의 모든 정보를 가지고 있음</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 92. 8강 4.3 최대가능도추정량의 정의 -->
+    <div class="slide">
+      <div class="slide-header">
+        <div class="header-left">
+          <div class="slide-category">5강 점추정</div>
+          <div class="slide-title">2.1 최대가능도추정량(MLE)의 정의</div>
+        </div>
+        <div class="slide-tag">2. 최대가능도추정량</div>
+      </div>
+      <div class="slide-body">
+        <div class="card">
+          <div class="card-title">MLE의 수식적 정의</div>
+          <p><math><mi>&#x3B8;</mi></math>에 대해 가능도함수 <math><mi>L</mi><mo stretchy="false">(</mo><mi>&#x3B8;</mi><mo>&#x7C;</mo><mi mathvariant="bold">x</mi><mo stretchy="false">)</mo></math>를 최대로 하는 통계량:</p>
+          <div class="math-card">
+            <math>
+              <mover><mi>&#x3B8;</mi><mo stretchy="false">^</mo></mover><mo stretchy="false">(</mo><msub><mi>X</mi><mn>1</mn></msub><mo>,</mo><mo>&#x2026;</mo><mo>,</mo><msub><mi>X</mi><mi>n</mi></msub><mo stretchy="false">)</mo><mo>=</mo><msub><mrow><mi>arg</mi><mspace width="0.2em"/><mi>max</mi></mrow><mi>&#x3B8;</mi></msub><mi>L</mi><mo stretchy="false">(</mo><mi>&#x3B8;</mi><mo>&#x7C;</mo><msub><mi>x</mi><mn>1</mn></msub><mo>,</mo><mo>&#x2026;</mo><mo>,</mo><msub><mi>x</mi><mi>n</mi></msub><mo stretchy="false">)</mo>
+            </math>
+          </div>
+          <p style="margin-top: 10px;"><math><mover><mi>&#x3B8;</mi><mo stretchy="false">^</mo></mover><mo stretchy="false">(</mo><mi mathvariant="bold">X</mi><mo stretchy="false">)</mo></math> : <math><mi mathvariant="bold">X</mi><mo>=</mo><mo stretchy="false">(</mo><msub><mi>X</mi><mn>1</mn></msub><mo>,</mo><mo>&#x2026;</mo><mo>,</mo><msub><mi>X</mi><mi>n</mi></msub><msup><mo stretchy="false">)</mo><mo>&#x2032;</mo></msup></math>에 대한 모수 <math><mi>&#x3B8;</mi></math>의 최대가능도추정량</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 93. 8강 4.4 최대가능도추정법 (방정식) -->
+    <div class="slide">
+      <div class="slide-header">
+        <div class="header-left">
+          <div class="slide-category">5강 점추정</div>
+          <div class="slide-title">2.2 최대가능도추정법</div>
+        </div>
+        <div class="slide-tag">2. 최대가능도추정량</div>
+      </div>
+      <div class="slide-body">
+        <div class="card">
+          <div class="card-title">가능도방정식</div>
+          <div class="math-card">
+            <math>
+              <mfrac><mi>d</mi><mrow><mi>d</mi><mi>&#x3B8;</mi></mrow></mfrac><mi>log</mi><mi>L</mi><mo stretchy="false">(</mo><mi>&#x3B8;</mi><mo stretchy="false">)</mo><mo>=</mo><mn>0</mn>
+            </math>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">다변수 모수의 연립방정식</div>
+          <p><math><mi>f</mi><mo stretchy="false">(</mo><mi>x</mi><mo>&#x7C;</mo><msub><mi>&#x3B8;</mi><mn>1</mn></msub><mo>,</mo><mo>&#x2026;</mo><mo>,</mo><msub><mi>&#x3B8;</mi><mi>k</mi></msub><mo stretchy="false">)</mo></math> 확률표본의 가능도함수 <math><mi>L</mi><mo stretchy="false">(</mo><mi mathvariant="bold">&#x3B8;</mi><mo>&#x7C;</mo><mi>x</mi><mo stretchy="false">)</mo><mo>=</mo><munderover><mo>&#x220F;</mo><mrow><mi>i</mi><mo>=</mo><mn>1</mn></mrow><mi>n</mi></munderover><mi>f</mi><mo stretchy="false">(</mo><msub><mi>x</mi><mi>i</mi></msub><mo>&#x7C;</mo><msub><mi>&#x3B8;</mi><mn>1</mn></msub><mo>,</mo><mo>&#x2026;</mo><mo>,</mo><msub><mi>&#x3B8;</mi><mi>k</mi></msub><mo stretchy="false">)</mo></math>:</p>
+          <div class="math-card">
+            <math>
+              <mfrac><mi>d</mi><mrow><mi>d</mi><msub><mi>&#x3B8;</mi><mn>1</mn></msub></mrow></mfrac><mi>log</mi><mi>L</mi><mo>=</mo><mn>0</mn><mo>,</mo><mspace width="1.5em"/><mo>&#x22EF;</mo><mo>,</mo><mspace width="1.5em"/><mfrac><mi>d</mi><mrow><mi>d</mi><msub><mi>&#x3B8;</mi><mi>k</mi></msub></mrow></mfrac><mi>log</mi><mi>L</mi><mo>=</mo><mn>0</mn>
+            </math>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 94. 8강 4.4 MLE 예제 5.7 -->
+    <div class="slide">
+      <div class="slide-header">
+        <div class="header-left">
+          <div class="slide-category">5강 점추정</div>
+          <div class="slide-title">2.3 최대가능도추정량의 예</div>
+        </div>
+        <div class="slide-tag">2. 최대가능도추정량</div>
+      </div>
+      <div class="slide-body">
+        <div class="card">
+          <div class="card-title">예 5.7 (베르누이 분포의 MLE)</div>
+          <p><math><msub><mi>X</mi><mn>1</mn></msub><mo>,</mo><mo>&#x2026;</mo><mo>,</mo><msub><mi>X</mi><mi>n</mi></msub><mo>~</mo><mi>B</mi><mo stretchy="false">(</mo><mn>1</mn><mo>,</mo><mi>p</mi><mo stretchy="false">)</mo></math> 확률표본, <math><mi>p</mi></math>의 최대가능도추정량은?</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 95. 8강 4.4 MLE 예제 5.9 -->
+    <div class="slide">
+      <div class="slide-header">
+        <div class="header-left">
+          <div class="slide-category">5강 점추정</div>
+          <div class="slide-title">2.3 최대가능도추정량의 예</div>
+        </div>
+        <div class="slide-tag">2. 최대가능도추정량</div>
+      </div>
+      <div class="slide-body">
+        <div class="card">
+          <div class="card-title">예 5.9 (지수분포의 MLE)</div>
+          <p><math><msub><mi>X</mi><mn>1</mn></msub><mo>,</mo><mo>&#x2026;</mo><mo>,</mo><msub><mi>X</mi><mi>n</mi></msub><mo>~</mo><mi>E</mi><mi>x</mi><mi>p</mi><mo stretchy="false">(</mo><mi>&#x3BB;</mi><mo stretchy="false">)</mo></math> 확률표본, <math><mi>&#x3BB;</mi></math>의 최대가능도추정량은?</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- 하단 내비게이션 및 컨트롤러 -->
+  <div class="footer-bar">
+    <div style="display: flex; gap: 8px; align-items: center;">
+      <button class="nav-btn" id="prevBtn" onclick="prevSlide()">◀ 이전</button>
+      <button class="pdf-btn" onclick="saveAsPDF()">PDF로 저장</button>
+    </div>
+
+    <div class="jump-controller">
+      <select class="slide-select" id="slideSelect" onchange="jumpFromSelect(this.value)">
+      </select>
+      <input type="number" class="jump-input" id="jumpInput" min="1" onkeydown="handleJumpKey(event)">
+      <span>/ <span id="totalPageDisplay"></span></span>
+      <button class="jump-btn" onclick="jumpFromInput()">이동</button>
+    </div>
+
+    <button class="nav-btn primary" id="nextBtn" onclick="nextSlide()">다음 ▶</button>
+  </div>
+</div>
+
+<script>
+  const slides = document.querySelectorAll('.slide');
+  let currentIndex = 0;
+  const total = slides.length;
+
+  const prevBtn = document.getElementById('prevBtn');
+  const nextBtn = document.getElementById('nextBtn');
+  const jumpInput = document.getElementById('jumpInput');
+  const totalPageDisplay = document.getElementById('totalPageDisplay');
+  const slideSelect = document.getElementById('slideSelect');
+
+  totalPageDisplay.innerText = total;
+  slides.forEach((s, idx) => {
+    const titleElem = s.querySelector('.slide-title');
+    const titleText = titleElem ? titleElem.innerText : (idx === 0 ? '표지' : `슬라이드 ${idx + 1}`);
+    const opt = document.createElement('option');
+    opt.value = idx;
+    opt.innerText = `${idx + 1}. ${titleText}`;
+    slideSelect.appendChild(opt);
+  });
+
+  function showSlide(idx) {
+    if (idx < 0) idx = 0;
+    if (idx >= total) idx = total - 1;
+    currentIndex = idx;
+
+    slides.forEach((s, i) => {
+      s.classList.toggle('active', i === currentIndex);
+    });
+
+    prevBtn.disabled = (currentIndex === 0);
+    nextBtn.disabled = (currentIndex === total - 1);
+    jumpInput.value = currentIndex + 1;
+    slideSelect.value = currentIndex;
+
+    document.getElementById('slideArea').scrollTop = 0;
+  }
+
+  function nextSlide() {
+    if (currentIndex < total - 1) {
+      showSlide(currentIndex + 1);
+    }
+  }
+
+  function prevSlide() {
+    if (currentIndex > 0) {
+      showSlide(currentIndex - 1);
+    }
+  }
+
+  function jumpFromInput() {
+    const val = parseInt(jumpInput.value, 10);
+    if (!isNaN(val)) {
+      showSlide(val - 1);
+    }
+  }
+
+  function jumpFromSelect(val) {
+    showSlide(parseInt(val, 10));
+  }
+
+  function handleJumpKey(e) {
+    if (e.key === 'Enter') {
+      jumpFromInput();
+      jumpInput.blur();
+    }
+  }
+
+  function saveAsPDF() {
+    window.print();
+  }
+
+  window.addEventListener('keydown', (e) => {
+    if (document.activeElement === jumpInput || document.activeElement === slideSelect) {
+      return;
+    }
+    if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') {
+      nextSlide();
+    } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+      prevSlide();
+    }
+  });
+
+  showSlide(0);
+</script>
+
+</body>
+</html>
