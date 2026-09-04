@@ -248,6 +248,7 @@
       background: #ffffff;
       border-top: 1px solid #e2e8f0;
       user-select: none;
+      z-index: 1000;
     }
     .nav-btn {
       background: #ffffff;
@@ -358,7 +359,75 @@
     }
 
     /* ---------------------------------------------------- */
-    /* PDF 출력 / 인쇄 전용 미디어 쿼리 (가로 방향 및 페이지 분할) */
+    /* 펜 필기용 캔버스 및 툴바 스타일                      */
+    /* ---------------------------------------------------- */
+    #drawingCanvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 999; /* 슬라이드 위로 덮도록 배치 */
+      pointer-events: none; /* 기본 상태는 슬라이드 클릭 허용 */
+      touch-action: none;
+    }
+    #drawingCanvas.drawing-active {
+      pointer-events: auto !important; /* 펜 켜지면 캔버스 클릭 활성화 */
+      cursor: crosshair !important;
+    }
+    .pen-toolbar {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: #f1f5f9;
+      padding: 4px 10px;
+      border-radius: 8px;
+      border: 1px solid #e2e8f0;
+    }
+    .pen-btn {
+      background: #ffffff;
+      color: #334155;
+      border: 1px solid #cbd5e1;
+      padding: 6px 12px;
+      font-size: 13px;
+      font-weight: 700;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      white-space: nowrap;
+    }
+    .pen-btn:hover {
+      background: var(--primary-light);
+      color: var(--primary);
+    }
+    .pen-btn.active {
+      background: #dc2626 !important;
+      color: #ffffff !important;
+      border-color: #dc2626 !important;
+      box-shadow: 0 0 0 2px rgba(220, 38, 38, 0.35);
+    }
+    .color-picker {
+      width: 28px;
+      height: 28px;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      cursor: pointer;
+      padding: 0;
+      background: none;
+    }
+    .pen-width-select {
+      height: 28px;
+      font-size: 12px;
+      color: #334155;
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      padding: 0 4px;
+      cursor: pointer;
+    }
+
+    /* ---------------------------------------------------- */
+    /* PDF 출력 / 인쇄 전용 미디어 쿼리 (필기 오버레이 지원) */
     /* ---------------------------------------------------- */
     @media print {
       @page {
@@ -378,7 +447,7 @@
         box-shadow: none !important;
         display: block !important;
       }
-      .footer-bar {
+      .footer-bar, #drawingCanvas {
         display: none !important;
       }
       .slide-area {
@@ -394,6 +463,15 @@
         break-after: page;
         box-sizing: border-box;
         padding: 40px 56px !important;
+      }
+      .print-drawing-overlay {
+        position: absolute !important;
+        top: 0 !important;
+        left: 0 !important;
+        width: 100% !important;
+        height: 100% !important;
+        pointer-events: none !important;
+        z-index: 1000 !important;
       }
       .card, .math-card, .quote-card {
         page-break-inside: avoid;
@@ -465,7 +543,6 @@
         grid-template-columns: 1fr !important;
         gap: 12px !important;
       }
-      /* 표 형태 반응형 전환 (33번 시/표지 등) */
       table, tbody, tr, td {
         display: block !important;
         width: 100% !important;
@@ -484,7 +561,6 @@
       .title-slide-content .author-box {
         font-size: 16px !important;
       }
-      /* 하단 컨트롤러 모바일 최적화 */
       .footer-bar {
         padding: 8px 10px !important;
         gap: 4px !important;
@@ -493,15 +569,12 @@
         padding: 6px 10px !important;
         font-size: 13px !important;
       }
-      .pdf-btn {
-        display: none !important; /* 모바일 브라우저 인쇄 오작동 방지 */
+      .pdf-btn, .slide-select {
+        display: none !important;
       }
       .jump-controller {
         padding: 2px 6px !important;
         gap: 4px !important;
-      }
-      .slide-select {
-        display: none !important; /* 모바일에서는 작은 화면 확보를 위해 select 숨김 */
       }
       .jump-input {
         width: 42px !important;
@@ -516,7 +589,6 @@
         font-size: 13px !important;
       }
     }
-
   </style>
 </head>
 <body>
@@ -1167,7 +1239,7 @@
       </div>
     </div>
 
-  <!-- 33. 시 -->
+    <!-- 33. 시 및 도서 표지 -->
     <div class="slide">
       <div class="slide-header">
         <div class="header-left">
@@ -1178,10 +1250,8 @@
       </div>
       <div class="slide-body">
         <div class="card" style="padding: 22px;">
-          <!-- 가장 기본적이고 안정적인 좌우 분할 테이블 -->
           <table style="width: 100%; border-collapse: collapse; border: none;">
             <tr>
-              <!-- 왼쪽: 시 영역 -->
               <td style="vertical-align: middle; width: 62%; padding-right: 24px;">
                 <p style="white-space: pre-line; line-height: 1.8; color: #1e293b; font-size: 18px; margin: 0;">
 세상은 늘 변해가 확신 없는 빛 속에서
@@ -1197,7 +1267,6 @@
 우리는 추측하고 또 다시 검증해
                 </p>
               </td>
-              <!-- 오른쪽: 책 표지 이미지 영역 -->
               <td style="vertical-align: middle; width: 38%; text-align: center;">
                 <img src="img/datai.jpg" alt="데이터 지능 책 표지" style="max-height: 420px; max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); display: inline-block;">
               </td>
@@ -1206,7 +1275,6 @@
         </div>
       </div>
     </div>
-
 
     <!-- 34. 데이터 지능 및 유튜브 -->
     <div class="slide">
@@ -1367,7 +1435,7 @@
           <p>사건 <math><mi>B</mi></math> 발생 조건 하 사건 <math><mi>A</mi></math>가 발생할 조건부 확률:</p>
           <div class="math-card">
             <math>
-              <mi>P</mi><mo stretchy="false">(</mo><mi>A</mi><mo>&#x7C;</mo><mi>B</mi><mo stretchy="false">)</mo><mo>=</mo><mfrac><mrow><mi>P</mi><mo stretchy="false">(</mo><mi>A</mi><mo>&#x2229;</mo><mi>B</mi><mo stretchy="false">)</mo></mrow><mrow><mi>P</mi><mo stretchy="false">(</mo><mi>B</mi><mo stretchy="false">)</mo></mrow></mfrac>
+              <mi>P</mi><mo stretchy="false">(</mo><mi>A</mi><mo>&#x7C;</mo><mi>B</mi><mo stretchy="false">)</mo><mo>=</mo><mfrac><mrow><P><mi>A</mi><mo>&#x2229;</mo><mi>B</mi><mo stretchy="false">)</mo></mrow><mrow><mi>P</mi><mo stretchy="false">(</mo><mi>B</mi><mo stretchy="false">)</mo></mrow></mfrac>
             </math>
           </div>
         </div>
@@ -1612,7 +1680,7 @@
                   </mtr>
                   <mtr>
                     <mtd><msubsup><mo>&#x222B;</mo><mrow><mo>&#x2212;</mo><mi>&#x221E;</mi></mrow><mi>&#x221E;</mi></msubsup><mi>x</mi><mi>f</mi><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo><mi>d</mi><mi>x</mi><mo>,</mo></mtd>
-                    <mtd><mi>X</mi><mo>:</mo><mtext>&#160;연속형 확률변수</mtext></mtd>
+                    <mtd><mtext>연속형 확률변수</mtext></mtd>
                   </mtr>
                 </mtable>
               </mrow>
@@ -2439,7 +2507,7 @@
           <p><math><msub><mi>X</mi><mn>1</mn></msub><mo>,</mo><mo>&#x2026;</mo><mo>,</mo><msub><mi>X</mi><mi>n</mi></msub><mo>~</mo><mi>E</mi><mo stretchy="false">(</mo><msub><mi>X</mi><mi>i</mi></msub><mo stretchy="false">)</mo><mo>=</mo><mi>&#x3BC;</mi><mo>,</mo><mspace width="0.5em"/><mi>V</mi><mi>a</mi><mi>r</mi><mo stretchy="false">(</mo><msub><mi>X</mi><mi>i</mi></msub><mo stretchy="false">)</mo><mo>=</mo><msup><mi>&#x3C3;</mi><mn>2</mn></msup></math> 확률표본:</p>
           <div class="math-card">
             <math>
-              <msub><mover><mi>X</mi><mo accent="true">&#xAF;</mo></mover><mi>n</mi></msub><mtext>가&#160;</mtext><mi>&#x3BC;</mi><mtext>에 확률적으로 수렴&#160;</mtext><mo stretchy="false">(</mo><msub><mover><mi>X</mi><mo accent="true">&#xAF;</mo></mover><mi>n</mi></msub><mover><mo>&#x2192;</mo><mi>p</mi></mover><mi>&#x3BC;</mi><mo stretchy="false">)</mo>
+              <msub><mover><mi>X</mi><mo accent="true">&#xAF;</mo></mover><mi>n</mi></msub><mtext>가&#160;</mtext><mi>&#x3BC;</mi><mtext>에 확률적으로 수렴&#160;</mtext><mo stretchy="false">(</mo><msub><mover><mi>X</mi><mo accent="true">&#xAF;</mo></mover><mi>n</mi></msub><mover><mo>&#x2192;</mo><mi>p</mi></mover><mi>&#x3BC;</mi><mo stretchy="false">)</mo></math>
             </math>
           </div>
         </div>
@@ -2678,12 +2746,12 @@
       <div class="slide-body">
         <div class="card">
           <div class="card-title">예 5.7 (베르누이 분포의 MLE)</div>
-          <p><math><msub><mi>X</mi><mn>1</mn></msub><mo>,</mo><mo>&#x2026;</mo><mo>,</mo><msub><mi>X</mi><mi>n</mi></msub><mo>~</mo><mi>B</mi><mo stretchy="false">(</mo><mn>1</mn><mo>,</mo><mi>p</mi><mo stretchy="false">)</mo></math> 확률표본, <math><mi>p</mi></math>의 최대가능도추정량은?</p>
+          <p><math><msub><mi>X</mi><mn>1</mn></msub>,<mo>&#x2026;</mo>,<msub><mi>X</mi><mi>n</mi></msub><mo>~</mo><mi>B</mi><mo stretchy="false">(</mo><mn>1</mn><mo>,</mo><mi>p</mi><mo stretchy="false">)</mo></math> 확률표본, <math><mi>p</mi></math>의 최대가능도추정량은?</p>
         </div>
       </div>
     </div>
 
-      <div class="slide">
+    <div class="slide">
       <div class="slide-header">
         <div class="header-left">
           <div class="slide-category">5강 점추정</div>
@@ -2694,7 +2762,7 @@
       <div class="slide-body">
         <div class="card">
           <div class="card-title">예 5.7 (베르누이 분포의 MLE)</div>
-          <p><math><msub><mi>X</mi><mn>1</mn></msub><mo>,</mo><mo>&#x2026;</mo><mo>,</mo><msub><mi>X</mi><mi>n</mi></msub><mo>~</mo><mi>B</mi><mo stretchy="false">(</mo><mn>1</mn><mo>,</mo><mi>p</mi><mo stretchy="false">)</mo></math> 확률표본, <math><mi>p</mi></math>의 최대가능도추정량은?</p>
+          <p><math><msub><mi>X</mi><mn>1</mn></msub>,<mo>&#x2026;</mo>,<msub><mi>X</mi><mi>n</mi></msub><mo>~</mo><mi>B</mi><mo stretchy="false">(</mo><mn>1</mn><mo>,</mo><mi>p</mi><mo stretchy="false">)</mo></math> 확률표본, <math><mi>p</mi></math>의 최대가능도추정량은?</p>
         </div>
       </div>
     </div>
@@ -2711,12 +2779,12 @@
       <div class="slide-body">
         <div class="card">
           <div class="card-title">예 5.9 (지수분포의 MLE)</div>
-          <p><math><msub><mi>X</mi><mn>1</mn></msub><mo>,</mo><mo>&#x2026;</mo><mo>,</mo><msub><mi>X</mi><mi>n</mi></msub><mo>~</mo><mi>E</mi><mi>x</mi><mi>p</mi><mo stretchy="false">(</mo><mi>&#x3BB;</mi><mo stretchy="false">)</mo></math> 확률표본, <math><mi>&#x3BB;</mi></math>의 최대가능도추정량은?</p>
+          <p><math><msub><mi>X</mi><mn>1</mn></msub>,<mo>&#x2026;</mo>,<msub><mi>X</mi><mi>n</mi></msub><mo>~</mo><mi>E</mi><mi>x</mi><mi>p</mi><mo stretchy="false">(</mo><mi>&#x3BB;</mi><mo stretchy="false">)</mo></math> 확률표본, <math><mi>&#x3BB;</mi></math>의 최대가능도추정량은?</p>
         </div>
       </div>
     </div>
 
-   <div class="slide">
+    <div class="slide">
       <div class="slide-header">
         <div class="header-left">
           <div class="slide-category">5강 점추정</div>
@@ -2727,18 +2795,34 @@
       <div class="slide-body">
         <div class="card">
           <div class="card-title">예 5.9 (지수분포의 MLE)</div>
-          <p><math><msub><mi>X</mi><mn>1</mn></msub><mo>,</mo><mo>&#x2026;</mo><mo>,</mo><msub><mi>X</mi><mi>n</mi></msub><mo>~</mo><mi>E</mi><mi>x</mi><mi>p</mi><mo stretchy="false">(</mo><mi>&#x3BB;</mi><mo stretchy="false">)</mo></math> 확률표본, <math><mi>&#x3BB;</mi></math>의 최대가능도추정량은?</p>
+          <p><math><msub><mi>X</mi><mn>1</mn></msub>,<mo>&#x2026;</mo>,<msub><mi>X</mi><mi>n</mi></msub><mo>~</mo><mi>E</mi><mi>x</mi><mi>p</mi><mo stretchy="false">(</mo><mi>&#x3BB;</mi><mo stretchy="false">)</mo></math> 확률표본, <math><mi>&#x3BB;</mi></math>의 최대가능도추정량은?</p>
         </div>
       </div>
     </div>
 
-  </div>
+    <!-- 펜 판서용 투명 캔버스 레이어 (모든 슬라이드 위에 위치) -->
+    <canvas id="drawingCanvas"></canvas>
+
+  </div> <!-- #slideArea 끝 -->
 
   <!-- 하단 내비게이션 및 컨트롤러 -->
   <div class="footer-bar">
-    <div style="display: flex; gap: 8px; align-items: center;">
+    <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
       <button class="nav-btn" id="prevBtn" onclick="prevSlide()">◀ 이전</button>
       <button class="pdf-btn" onclick="saveAsPDF()">PDF로 저장</button>
+
+      <!-- 펜 판서 도구 모음 -->
+      <div class="pen-toolbar">
+        <button class="pen-btn" id="penToggleBtn" onclick="togglePenMode()" title="펜 쓰기 모드 켜기/끄기">🖊️ 펜</button>
+        <input type="color" id="penColor" class="color-picker" value="#dc2626" title="펜 색상 선택">
+        <select id="penWidth" class="pen-width-select" title="펜 굵기">
+          <option value="2">가늘게</option>
+          <option value="4" selected>보통</option>
+          <option value="8">굵게</option>
+          <option value="16">매우굵게</option>
+        </select>
+        <button class="pen-btn" onclick="clearCurrentCanvas()" title="현재 슬라이드 필기 지우기">🧹 지우기</button>
+      </div>
     </div>
 
     <div class="jump-controller">
@@ -2763,7 +2847,11 @@
   const jumpInput = document.getElementById('jumpInput');
   const totalPageDisplay = document.getElementById('totalPageDisplay');
   const slideSelect = document.getElementById('slideSelect');
+  const slideAreaElem = document.getElementById('slideArea');
 
+  // ----------------------------------------------------
+  // 슬라이드 목록 및 초기화
+  // ----------------------------------------------------
   totalPageDisplay.innerText = total;
   slides.forEach((s, idx) => {
     const titleElem = s.querySelector('.slide-title');
@@ -2777,6 +2865,12 @@
   function showSlide(idx) {
     if (idx < 0) idx = 0;
     if (idx >= total) idx = total - 1;
+
+    // 이전 슬라이드 판서 저장
+    if (isCanvasDirty) {
+      saveCurrentCanvas(currentIndex);
+    }
+
     currentIndex = idx;
 
     slides.forEach((s, i) => {
@@ -2788,7 +2882,10 @@
     jumpInput.value = currentIndex + 1;
     slideSelect.value = currentIndex;
 
-    document.getElementById('slideArea').scrollTop = 0;
+    slideAreaElem.scrollTop = 0;
+
+    // 해당 슬라이드 판서 복원
+    restoreCanvas(currentIndex);
   }
 
   function nextSlide() {
@@ -2821,10 +2918,34 @@
     }
   }
 
+  // ----------------------------------------------------
+  // 판서 내용 포함 PDF 저장 기능
+  // ----------------------------------------------------
   function saveAsPDF() {
-    window.print();
+    if (isCanvasDirty) {
+      saveCurrentCanvas(currentIndex);
+    }
+
+    document.querySelectorAll('.print-drawing-overlay').forEach(el => el.remove());
+
+    slides.forEach((slide, idx) => {
+      if (slideDrawings[idx]) {
+        const overlayImg = document.createElement('img');
+        overlayImg.src = slideDrawings[idx];
+        overlayImg.className = 'print-drawing-overlay';
+        slide.appendChild(overlayImg);
+      }
+    });
+
+    setTimeout(() => {
+      window.print();
+      setTimeout(() => {
+        document.querySelectorAll('.print-drawing-overlay').forEach(el => el.remove());
+      }, 1000);
+    }, 200);
   }
 
+  // 키보드 네비게이션
   window.addEventListener('keydown', (e) => {
     if (document.activeElement === jumpInput || document.activeElement === slideSelect) {
       return;
@@ -2836,39 +2957,170 @@
     }
   });
 
-
-  // 모바일 터치 스와이프 제스처 (좌우 쓸어넘기기)
+  // ----------------------------------------------------
+  // 모바일 터치 스와이프 제스처 (펜 모드일 때는 비활성화)
+  // ----------------------------------------------------
   let touchStartX = 0;
   let touchEndX = 0;
   let touchStartY = 0;
   let touchEndY = 0;
 
-  const slideAreaElem = document.getElementById('slideArea');
-
   slideAreaElem.addEventListener('touchstart', (e) => {
+    if (isPenMode) return; // 펜 모드 시 슬라이드 넘김 차단
     touchStartX = e.changedTouches[0].screenX;
     touchStartY = e.changedTouches[0].screenY;
   }, { passive: true });
 
   slideAreaElem.addEventListener('touchend', (e) => {
+    if (isPenMode) return; // 펜 모드 시 슬라이드 넘김 차단
     touchEndX = e.changedTouches[0].screenX;
     touchEndY = e.changedTouches[0].screenY;
     handleSwipe();
   }, { passive: true });
 
   function handleSwipe() {
+    if (isPenMode) return;
     const diffX = touchEndX - touchStartX;
     const diffY = touchEndY - touchStartY;
-    // 수평 스와이프가 수직 스크롤보다 크고 40px 이상 이동했을 때만 전환
     if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 40) {
       if (diffX < 0) {
-        nextSlide(); // 왼쪽으로 밀면 다음 슬라이드
+        nextSlide();
       } else {
-        prevSlide(); // 오른쪽으로 밀면 이전 슬라이드
+        prevSlide();
       }
     }
   }
 
+  // ----------------------------------------------------
+  // 펜 필기 엔진 (Pointer Events: 마우스/터치/스타일러스 완벽 호환)
+  // ----------------------------------------------------
+  const canvas = document.getElementById('drawingCanvas');
+  const ctx = canvas.getContext('2d');
+  const penToggleBtn = document.getElementById('penToggleBtn');
+  const penColorPicker = document.getElementById('penColor');
+  const penWidthSelect = document.getElementById('penWidth');
+  
+  let isPenMode = false;
+  let isDrawing = false;
+  let isCanvasDirty = false;
+  const slideDrawings = {};
+
+  function syncCanvasSize() {
+    const rect = slideAreaElem.getBoundingClientRect();
+    const w = Math.round(rect.width);
+    const h = Math.round(rect.height);
+    if (w > 0 && h > 0) {
+      if (canvas.width !== w || canvas.height !== h) {
+        canvas.width = w;
+        canvas.height = h;
+        restoreCanvas(currentIndex);
+      }
+    }
+  }
+  window.addEventListener('resize', syncCanvasSize);
+
+  function togglePenMode() {
+    isPenMode = !isPenMode;
+    penToggleBtn.classList.toggle('active', isPenMode);
+    canvas.classList.toggle('drawing-active', isPenMode);
+    penToggleBtn.innerText = isPenMode ? '🖊️ 펜 켜짐' : '🖊️ 펜';
+    if (isPenMode) {
+      syncCanvasSize();
+    }
+  }
+
+  function getCanvasPos(e) {
+    const rect = canvas.getBoundingClientRect();
+    const scaleX = canvas.width / rect.width;
+    const scaleY = canvas.height / rect.height;
+    return {
+      x: (e.clientX - rect.left) * scaleX,
+      y: (e.clientY - rect.top) * scaleY
+    };
+  }
+
+  function setPenContext() {
+    const width = parseInt(penWidthSelect.value, 10);
+    const color = penColorPicker.value;
+
+    ctx.strokeStyle = color;
+    ctx.lineWidth = width;
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+
+    if (width >= 16) {
+      ctx.globalAlpha = 0.35; // 형광펜
+    } else {
+      ctx.globalAlpha = 1.0;
+    }
+  }
+
+  canvas.addEventListener('pointerdown', (e) => {
+    if (!isPenMode) return;
+    e.preventDefault();
+    try {
+      canvas.setPointerCapture(e.pointerId);
+    } catch(err) {}
+    
+    isDrawing = true;
+    isCanvasDirty = true;
+
+    setPenContext();
+    const pos = getCanvasPos(e);
+    ctx.beginPath();
+    ctx.moveTo(pos.x, pos.y);
+    ctx.lineTo(pos.x + 0.1, pos.y + 0.1);
+    ctx.stroke();
+  });
+
+  canvas.addEventListener('pointermove', (e) => {
+    if (!isDrawing || !isPenMode) return;
+    e.preventDefault();
+    const pos = getCanvasPos(e);
+    ctx.lineTo(pos.x, pos.y);
+    ctx.stroke();
+  });
+
+  function endPointerStroke(e) {
+    if (!isDrawing) return;
+    isDrawing = false;
+    ctx.closePath();
+    ctx.globalAlpha = 1.0;
+    saveCurrentCanvas(currentIndex);
+    try {
+      canvas.releasePointerCapture(e.pointerId);
+    } catch(err) {}
+  }
+
+  canvas.addEventListener('pointerup', endPointerStroke);
+  canvas.addEventListener('pointercancel', endPointerStroke);
+
+  function saveCurrentCanvas(idx) {
+    slideDrawings[idx] = canvas.toDataURL();
+  }
+
+  function restoreCanvas(idx) {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    if (slideDrawings[idx]) {
+      const img = new Image();
+      img.onload = () => {
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+      };
+      img.src = slideDrawings[idx];
+    }
+  }
+
+  function clearCurrentCanvas() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    delete slideDrawings[currentIndex];
+    isCanvasDirty = false;
+  }
+
+  window.addEventListener('load', () => {
+    syncCanvasSize();
+    showSlide(0);
+  });
+  setTimeout(syncCanvasSize, 100);
   showSlide(0);
 </script>
 
