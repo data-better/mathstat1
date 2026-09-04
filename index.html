@@ -400,6 +400,123 @@
         break-inside: avoid;
       }
     }
+
+    /* ---------------------------------------------------- */
+    /* 모바일 및 태블릿 반응형 미디어 쿼리                  */
+    /* ---------------------------------------------------- */
+    @media (max-width: 768px) {
+      body {
+        padding: 0 !important;
+        align-items: stretch !important;
+      }
+      #presentation-wrapper {
+        width: 100vw !important;
+        height: 100vh !important;
+        height: 100dvh !important;
+        max-width: 100vw !important;
+        border-radius: 0 !important;
+        box-shadow: none !important;
+      }
+      .slide {
+        padding: 20px 16px 24px 16px !important;
+        overflow-y: auto !important;
+      }
+      .slide-header {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        gap: 6px !important;
+        padding-bottom: 8px !important;
+        margin-bottom: 14px !important;
+      }
+      .slide-title {
+        font-size: 20px !important;
+        line-height: 1.3 !important;
+      }
+      .slide-category {
+        font-size: 12px !important;
+      }
+      .slide-tag {
+        align-self: flex-start !important;
+        font-size: 12px !important;
+        padding: 3px 8px !important;
+      }
+      .slide-body {
+        font-size: 16px !important;
+        line-height: 1.6 !important;
+      }
+      .card {
+        padding: 16px 14px !important;
+        margin-bottom: 12px !important;
+      }
+      .card-title {
+        font-size: 17px !important;
+        margin-bottom: 8px !important;
+      }
+      .math-card {
+        padding: 12px 10px !important;
+        margin: 10px 0 !important;
+        overflow-x: auto !important;
+        justify-content: flex-start !important;
+      }
+      math {
+        font-size: 18px !important;
+      }
+      .grid-2 {
+        grid-template-columns: 1fr !important;
+        gap: 12px !important;
+      }
+      /* 표 형태 반응형 전환 (33번 시/표지 등) */
+      table, tbody, tr, td {
+        display: block !important;
+        width: 100% !important;
+        padding: 0 !important;
+      }
+      td:first-child {
+        margin-bottom: 16px !important;
+      }
+      img {
+        max-width: 100% !important;
+        height: auto !important;
+      }
+      .title-slide-content h1 {
+        font-size: 34px !important;
+      }
+      .title-slide-content .author-box {
+        font-size: 16px !important;
+      }
+      /* 하단 컨트롤러 모바일 최적화 */
+      .footer-bar {
+        padding: 8px 10px !important;
+        gap: 4px !important;
+      }
+      .nav-btn {
+        padding: 6px 10px !important;
+        font-size: 13px !important;
+      }
+      .pdf-btn {
+        display: none !important; /* 모바일 브라우저 인쇄 오작동 방지 */
+      }
+      .jump-controller {
+        padding: 2px 6px !important;
+        gap: 4px !important;
+      }
+      .slide-select {
+        display: none !important; /* 모바일에서는 작은 화면 확보를 위해 select 숨김 */
+      }
+      .jump-input {
+        width: 42px !important;
+        height: 28px !important;
+        font-size: 14px !important;
+      }
+      .jump-btn {
+        padding: 4px 8px !important;
+        font-size: 12px !important;
+      }
+      .jump-controller span {
+        font-size: 13px !important;
+      }
+    }
+
   </style>
 </head>
 <body>
@@ -2670,6 +2787,39 @@
       prevSlide();
     }
   });
+
+
+  // 모바일 터치 스와이프 제스처 (좌우 쓸어넘기기)
+  let touchStartX = 0;
+  let touchEndX = 0;
+  let touchStartY = 0;
+  let touchEndY = 0;
+
+  const slideAreaElem = document.getElementById('slideArea');
+
+  slideAreaElem.addEventListener('touchstart', (e) => {
+    touchStartX = e.changedTouches[0].screenX;
+    touchStartY = e.changedTouches[0].screenY;
+  }, { passive: true });
+
+  slideAreaElem.addEventListener('touchend', (e) => {
+    touchEndX = e.changedTouches[0].screenX;
+    touchEndY = e.changedTouches[0].screenY;
+    handleSwipe();
+  }, { passive: true });
+
+  function handleSwipe() {
+    const diffX = touchEndX - touchStartX;
+    const diffY = touchEndY - touchStartY;
+    // 수평 스와이프가 수직 스크롤보다 크고 40px 이상 이동했을 때만 전환
+    if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 40) {
+      if (diffX < 0) {
+        nextSlide(); // 왼쪽으로 밀면 다음 슬라이드
+      } else {
+        prevSlide(); // 오른쪽으로 밀면 이전 슬라이드
+      }
+    }
+  }
 
   showSlide(0);
 </script>
